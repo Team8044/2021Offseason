@@ -30,8 +30,10 @@ public class Shooter extends SubsystemBase {
     public Shooter(Vision m_Vision) {
         limelight = m_Vision.limelight;
         shooterMaster = new LazyTalonFX(Constants.Shooter.shooterMasterConstats);
-        shooterSlave = new LazyTalonFX(Constants.Shooter.shooterSlaveConstants, shooterMaster);
+        shooterSlave = new LazyTalonFX(Constants.Shooter.shooterSlaveConstants);
+
         shooterMaster.configPID(Constants.Shooter.shooterPID);
+        shooterSlave.follow(shooterMaster);
 
         angleMotor = new LazySparkMAX(Constants.Shooter.angleMotorConstants);
 

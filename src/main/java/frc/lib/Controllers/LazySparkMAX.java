@@ -35,29 +35,6 @@ public class LazySparkMAX extends CANSparkMax {
 
         m_encoder.setPosition(0);
     }
-
-    /**
-     * Config a Spark Max follower using sparkConstants, master Spark Max to follow,
-     * and if the follower should be inverted or not from the master.
-     * 
-     * @param sparkConstants
-     * @param masterSpark Master Spark Max to follow
-     * @param invertedFromMaster Is follower inverted from master.
-     */
-    public LazySparkMAX(SparkConstants sparkConstants, CANSparkMax masterSpark, boolean invertedFromMaster) {
-        super(sparkConstants.deviceId, sparkConstants.motorType);
-        super.restoreFactoryDefaults();
-        super.setSmartCurrentLimit(sparkConstants.smartCurrentLimit);
-        super.enableVoltageCompensation(12);
-        super.setIdleMode(sparkConstants.idleMode);
-        super.follow(masterSpark, invertedFromMaster);
-        super.burnFlash();
-
-        m_pidController = super.getPIDController();
-        m_encoder = super.getEncoder();
-
-        m_encoder.setPosition(0);
-    }
     
     public void set(ControlType type, double setpoint) {
         m_pidController.setReference(setpoint, type);

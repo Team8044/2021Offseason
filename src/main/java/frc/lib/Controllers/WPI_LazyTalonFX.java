@@ -1,6 +1,5 @@
 package frc.lib.Controllers;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.lib.math.PIDGains;
@@ -25,24 +24,6 @@ public class WPI_LazyTalonFX extends WPI_TalonFX {
         super.configVoltageCompSaturation(12);
         super.enableVoltageCompensation(true);
         super.setSelectedSensorPosition(0);
-    }
-
-    /**
-     * Config a Talon FX slave using talonFxConstants and master.
-     * 
-     * @param talonFxConstants
-     * @param masterTalon Talon FX to follow
-     */
-    public WPI_LazyTalonFX(TalonConstants talonConstants, TalonFX masterTalon) {
-        super(talonConstants.deviceNumber);
-        super.configFactoryDefault();
-        super.configSupplyCurrentLimit(talonConstants.currentLimit);
-        super.setNeutralMode(talonConstants.neutralMode);
-        super.setInverted(talonConstants.invertType);
-        super.configVoltageCompSaturation(12);
-        super.enableVoltageCompensation(true);
-        super.setSelectedSensorPosition(0);
-        super.follow(masterTalon);
     }
     
     /**

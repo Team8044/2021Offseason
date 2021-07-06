@@ -1,6 +1,5 @@
 package frc.lib.Controllers;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import frc.lib.math.PIDGains;
@@ -18,30 +17,11 @@ public class LazyVictorSPX extends VictorSPX {
     public LazyVictorSPX(TalonConstants talonConstants) {
         super(talonConstants.deviceNumber);
         super.configFactoryDefault();
-        // super.configSupplyCurrentLimit(talonConstants.currentLimit);
         super.setNeutralMode(talonConstants.neutralMode);
         super.setInverted(talonConstants.invertType);
         super.configVoltageCompSaturation(12);
         super.enableVoltageCompensation(true);
         super.setSelectedSensorPosition(0);
-    }
-
-    /**
-     * Config a Victor SPX slave using talonFxConstants and master Talon.
-     * 
-     * @param talonConstants
-     * @param masterTalon Talon to Follow
-     */
-    public LazyVictorSPX(TalonConstants talonConstants, TalonSRX masterTalon) {
-        super(talonConstants.deviceNumber);
-        super.configFactoryDefault();
-        // super.configSupplyCurrentLimit(talonConstants.currentLimit);
-        super.setNeutralMode(talonConstants.neutralMode);
-        super.setInverted(talonConstants.invertType);
-        super.configVoltageCompSaturation(12);
-        super.enableVoltageCompensation(true);
-        super.setSelectedSensorPosition(0);
-        super.follow(masterTalon);
     }
     
     /**

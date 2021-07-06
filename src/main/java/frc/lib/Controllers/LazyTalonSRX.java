@@ -24,24 +24,6 @@ public class LazyTalonSRX extends TalonSRX {
         super.enableVoltageCompensation(true);
         super.setSelectedSensorPosition(0);
     }
-
-    /**
-     * Config a Talon SRX slave using talonFxConstants and master.
-     * 
-     * @param talonConstants
-     * @param masterTalon Talon SRX to follow
-     */
-    public LazyTalonSRX(TalonConstants talonConstants, TalonSRX masterTalon) {
-        super(talonConstants.deviceNumber);
-        super.configFactoryDefault();
-        super.configSupplyCurrentLimit(talonConstants.currentLimit);
-        super.setNeutralMode(talonConstants.neutralMode);
-        super.setInverted(talonConstants.invertType);
-        super.configVoltageCompSaturation(12);
-        super.enableVoltageCompensation(true);
-        super.setSelectedSensorPosition(0);
-        super.follow(masterTalon);
-    }
     
     /**
      * Config PID Gains and Peak Outputs using PIDGains

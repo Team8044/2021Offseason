@@ -29,12 +29,15 @@ public class DriveTrain extends SubsystemBase {
 
     public DriveTrain() {
         leftMaster = new WPI_LazyTalonFX(Constants.Drive.leftMaster);
-        leftSlave = new WPI_LazyTalonFX(Constants.Drive.leftSlave, leftMaster);
+        leftSlave = new WPI_LazyTalonFX(Constants.Drive.leftSlave);
         rightMaster = new WPI_LazyTalonFX(Constants.Drive.rightMaster);
-        rightSlave = new WPI_LazyTalonFX(Constants.Drive.rightSlave, rightMaster);
+        rightSlave = new WPI_LazyTalonFX(Constants.Drive.rightSlave);
 
         leftMaster.configPID(Constants.Drive.drivePID);
         rightMaster.configPID(Constants.Drive.drivePID);
+
+        leftSlave.follow(leftMaster);
+        rightSlave.follow(rightMaster);
 
         gyro = new AHRS();
         zeroGyro();
