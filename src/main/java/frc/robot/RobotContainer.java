@@ -28,7 +28,6 @@ public class RobotContainer {
 
     /* Driver Controls */
     private final int forwardAxis = XboxController.Axis.kLeftY.value;
-    // private final int reverseAxis = XboxController.Axis.kLeftTrigger.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
     /* Driver Buttons */
@@ -37,14 +36,10 @@ public class RobotContainer {
     private final POVButton intakeExtendButton = new POVButton(driver, 180);
     private final POVButton intakeRetractButton = new POVButton(driver, 0);
 
+    /* Operator Buttons */
     private final JoystickButton shootButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton shooterActivateButton = new JoystickButton(operator, XboxController.Button.kBumperRight.value);
     private final JoystickButton shooterDeactivateButton = new JoystickButton(operator, XboxController.Button.kBumperLeft.value);
-
-
-    /* Operator Buttons */
-
-
 
     /* Subsystems */
     private final Vision m_Vision = new Vision();
@@ -73,14 +68,14 @@ public class RobotContainer {
         intakeButton.whileHeld(new IntakeControl(m_Intake, 1.0));
         outakeButton.whileHeld(new IntakeControl(m_Intake, -1.0));
         intakeExtendButton.whenPressed(new IntakePistonControl(m_Intake, true));
-        intakeRetractButton.whenPressed(new IntakePistonControl(m_Intake,false));
+        intakeRetractButton.whenPressed(new IntakePistonControl(m_Intake, false));
 
         /* Shooting */
         shootButton.whileHeld(
             new ParallelCommandGroup(
-            new KickerControl(m_Kicker, 1), 
-            new IndexerControl(m_Indexer, 1),
-            new IntakeControl(m_Intake, 1)
+            new KickerControl(m_Kicker, 1.0), 
+            new IndexerControl(m_Indexer, 1.0),
+            new IntakeControl(m_Intake, 1.0)
             )
         );
         shooterActivateButton.whenPressed(new InstantCommand(() -> activate_Shooter()));

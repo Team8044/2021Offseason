@@ -9,12 +9,10 @@ import com.revrobotics.ControlType;
 import frc.lib.math.PIDGains;
 
 /**
- * Thin Spark Max wrapper to make setup easier and reduce CAN bus overhead 
- * by skipping duplicate commands.
+ * Thin Spark Max wrapper to make setup easier, 
+ * and automatically initalize the internal CANEncoder and PIDController.
  */
 public class LazySparkMAX extends CANSparkMax {
-    protected double lastSet = Double.NaN;
-    protected ControlType lastControlType = null;
     protected CANPIDController m_pidController;
     protected CANEncoder m_encoder;
 
@@ -74,7 +72,7 @@ public class LazySparkMAX extends CANSparkMax {
         m_pidController.setI(pidGains.kI);
         m_pidController.setD(pidGains.kD);
         m_pidController.setFF(pidGains.kFF);
-        // m_pidController.setOutputRange(pidGains.kMaxReverse, pidGains.kMaxForward);
+        m_pidController.setOutputRange(pidGains.kMaxReverse, pidGains.kMaxForward);
     }
 
     /**

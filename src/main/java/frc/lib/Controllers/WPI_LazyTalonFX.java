@@ -1,6 +1,5 @@
 package frc.lib.Controllers;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -11,8 +10,6 @@ import frc.lib.math.PIDGains;
  * by skipping duplicate commands.
  */
 public class WPI_LazyTalonFX extends WPI_TalonFX {
-    protected double lastSet = Double.NaN;
-    protected ControlMode lastControlMode = null;
 
     /**
      * Config a Talon FX using talonFxConstants.
@@ -46,15 +43,6 @@ public class WPI_LazyTalonFX extends WPI_TalonFX {
         super.enableVoltageCompensation(true);
         super.setSelectedSensorPosition(0);
         super.follow(masterTalon);
-    }
-
-    @Override
-    public void set(ControlMode mode, double value) {
-        if (value != lastSet || mode != lastControlMode) {
-            lastSet = value;
-            lastControlMode = mode;
-            super.set(mode, value);
-        }
     }
     
     /**

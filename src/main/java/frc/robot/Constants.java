@@ -82,11 +82,8 @@ public final class Constants {
         public static final TalonConstants shooterSlaveConstants = 
             new TalonConstants(6, talonCurrentLimit.supplyCurLim40, NeutralMode.Coast, InvertType.OpposeMaster);    
 
-        public static final SparkConstants angleMasterConstants =
+        public static final SparkConstants angleMotorConstants =
             new SparkConstants(9, MotorType.kBrushless, 60, IdleMode.kCoast, false);
-
-        public static final SparkConstants angleSlaveConstants =
-            new SparkConstants(11, MotorType.kBrushless, 60, IdleMode.kCoast, false);
 
         public static final PIDGains shooterPID = new PIDGains(0.1, 0.0, 0.0, 0.046976);
         public static final PIDGains anglePID = new PIDGains(0.175, 0.0, 0.0, 0.0);
@@ -104,7 +101,7 @@ public final class Constants {
         // {distance, shooterRPM, shooterAngle}
         {
              {3.0, 3200.0, 10.0},
-             {4.00, 3200.0, 9.0},
+             {4.0, 3200.0, 9.0},
              {5.0, 3000.0, 8.0},
              {6.0, 3000.0, 7.0},
              {7.0, 3100.0, 6.5},

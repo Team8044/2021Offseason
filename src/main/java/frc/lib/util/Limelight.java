@@ -66,17 +66,11 @@ public class Limelight {
         return ((ntLatency + 11) / 1000); //11ms Capture Latency
     }
 
-    /**Use to set state of LL's leds
-     * @param ledState
-     * <pre> 
-     * 0: pipeline
-     * 1: off
-     * 2: blink
-     * 3: on
-     * </pre>
+    /**
+     * Use to set state of LL's leds
      */
-    public void ledState(int ledState){
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ledState);
+    public void ledState(ledStates ledState){
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ledState.value);
     }
 
     /** Use to set LL camera mode
@@ -94,5 +88,18 @@ public class Limelight {
      */
     public void setPipeline(int pipeline){
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(pipeline);
+    }
+    
+    /** Possible values for Led States. */
+    public enum ledStates {
+        pipeline(0),
+        off(1),
+        blink(2),
+        on(3);
+        
+        public final int value;
+        ledStates(int value) {
+          this.value = value;
+        }
     }
 }

@@ -1,17 +1,13 @@
 package frc.lib.Controllers;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import frc.lib.math.PIDGains;
 
 /**
- * Thin Falcon wrapper to make setup easier and reduce CAN bus overhead 
- * by skipping duplicate commands.
+ * Thin Falcon wrapper to make setup easier.
  */
 public class LazyTalonFX extends TalonFX {
-    protected double lastSet = Double.NaN;
-    protected ControlMode lastControlMode = null;
 
     /**
      * Config a Talon FX using talonFxConstants.

@@ -1,18 +1,14 @@
 package frc.lib.Controllers;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import frc.lib.math.PIDGains;
 
 /**
- * Thin WPI Falcon wrapper to make setup easier and reduce CAN bus overhead 
- * by skipping duplicate commands.
+ * Thin Victor SPX wrapper to make setup easier.
  */
 public class LazyVictorSPX extends VictorSPX {
-    protected double lastSet = Double.NaN;
-    protected ControlMode lastControlMode = null;
 
     /**
      * Config a Victor SPX using talonConstants
@@ -31,7 +27,7 @@ public class LazyVictorSPX extends VictorSPX {
     }
 
     /**
-     * Config a Talon FX slave using talonFxConstants and master.
+     * Config a Victor SPX slave using talonFxConstants and master Talon.
      * 
      * @param talonConstants
      * @param masterTalon Talon to Follow

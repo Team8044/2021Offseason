@@ -37,8 +37,10 @@ public class DriveTrain extends SubsystemBase {
         rightMaster.configPID(Constants.Drive.drivePID);
 
         gyro = new AHRS();
+        zeroGyro();
 
         m_robotDrive = new DifferentialDrive(leftMaster, rightMaster);
+        // m_robotDrive.setRightSideInverted(false); TODO
         m_odometry = new DifferentialDriveOdometry(getYaw());
     }
 

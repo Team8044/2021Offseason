@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,7 +19,7 @@ import frc.robot.States.ShooterStates;
 public class Shooter extends SubsystemBase {
     private LazyTalonFX shooterMaster;
     private LazyTalonFX shooterSlave;
-    private LazySparkMAX angleMaster;
+    private LazySparkMAX angleMotor;
 
     private InterpolatableTreeMap<Double> shooterMap = new InterpolatableTreeMap<>();
     private InterpolatableTreeMap<Double> angleMap = new InterpolatableTreeMap<>();
@@ -34,12 +33,7 @@ public class Shooter extends SubsystemBase {
         shooterSlave = new LazyTalonFX(Constants.Shooter.shooterSlaveConstants, shooterMaster);
         shooterMaster.configPID(Constants.Shooter.shooterPID);
 
-        angleMaster = new LazySparkMAX(Constants.Shooter.angleMasterConstants);
-
-        angleMaster.setSoftLimit(SoftLimitDirection.kForward, Constants.Shooter.angleForwardLimit);
-        angleMaster.setSoftLimit(SoftLimitDirection.kReverse, Constants.Shooter.angleReverseLimit);
-        angleMaster.enableSoftLimit(SoftLimitDirection.kForward, false);
-        angleMaster.enableSoftLimit(SoftLimitDirection.kReverse, false);
+        angleMotor = new LazySparkMAX(Constants.Shooter.angleMotorConstants);
 
         angleController = new PIDController(
             Constants.Shooter.anglePID.kP,
@@ -69,25 +63,28 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getShooterAngle(){
-        return angleMaster.getPosition();
+        return angleMotor.getPosition();
     }
 
     public void setShooterAngle(double angle){
-        double shooterAngle = (angle < Constants.Shooter.angleReverseLimit) ? Constants.Shooter.angleReverseLimit : angle;
-        shooterAngle = (shooterAngle > Constants.Shooter.angleForwardLimit) ? Constants.Shooter.angleForwardLimit : angle;
-        double demand = angleController.calculate(angleMaster.getPosition(), shooterAngle);
-        angleMaster.set(ControlType.kDutyCycle, demand);
+        double finalAngle = angle;
+        if (angle < Constants.Shooter.angleReverseLimit){
+            finalAngle = Constants.Shooter.angleReverseLimit;
+        }
+        else if (angle > Constants.Shooter.angleForwardLimit) {
+            finalAngle = Constants.Shooter.angleForwardLimit;
+        }
+        double demand = angleController.calculate(angleMotor.getPosition(), finalAngle);
+        angleMotor.set(ControlType.kDutyCycle, demand);
     }
 
     private boolean resetShooterTilt(){
-        if(angleMaster.getOutputCurrent() < 5.0){
-            angleMaster.set(ControlType.kDutyCycle, -0.1);
+        if(angleMotor.getOutputCurrent() < 5.0){
+            angleMotor.set(ControlType.kDutyCycle, -0.1);
             return false;
         } else{
-            angleMaster.set(ControlType.kDutyCycle, 0);
-            angleMaster.setPosition(0);
-            angleMaster.enableSoftLimit(SoftLimitDirection.kForward, false);
-            angleMaster.enableSoftLimit(SoftLimitDirection.kReverse, false);
+            angleMotor.set(ControlType.kDutyCycle, 0);
+            angleMotor.setPosition(0);
             return true;
         }
     }
@@ -101,14 +98,20 @@ public class Shooter extends SubsystemBase {
                 }
                 shooterMaster.set(ControlMode.PercentOutput, 0);
                 break;
+
             case disabled:
                 shooterMaster.set(ControlMode.PercentOutput, 0);
-                // setShooterAngle(0.0);
-                angleMaster.set(ControlType.kDutyCycle, 0.0);
+                angleMotor.set(ControlType.kDutyCycle, 0);
                 break;
+                
             case preShoot:
-                setShooterRPM(Constants.Shooter.calibrationMode ? SmartDashboard.getNumber("Shooter RPM Calib", 0) : shooterMap.get(limelight.getDistance().getNorm()));
-                setShooterAngle(Constants.Shooter.calibrationMode ? SmartDashboard.getNumber("Shooter Angle Calib", 0) : angleMap.get(limelight.getDistance().getNorm()));
+                if (Constants.Shooter.calibrationMode){
+                    setShooterRPM(SmartDashboard.getNumber("Shooter RPM Calib", 0));
+                    setShooterAngle(SmartDashboard.getNumber("Shooter Angle Calib", 0));
+                } else{
+                    setShooterRPM(shooterMap.get(limelight.getDistance().getNorm()));
+                    setShooterAngle(angleMap.get(limelight.getDistance().getNorm()));
+                }
                 break;
         }
 

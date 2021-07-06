@@ -1,17 +1,13 @@
 package frc.lib.Controllers;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.lib.math.PIDGains;
 
 /**
- * Thin WPI Falcon wrapper to make setup easier and reduce CAN bus overhead 
- * by skipping duplicate commands.
+ * Thin Talon SRX wrapper to make setup easier.
  */
 public class LazyTalonSRX extends TalonSRX {
-    protected double lastSet = Double.NaN;
-    protected ControlMode lastControlMode = null;
 
     /**
      * Config a Talon SRX using talonFxConstants.
