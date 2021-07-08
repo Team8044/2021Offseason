@@ -31,16 +31,16 @@ public class teleopDrive extends CommandBase {
         this.rotation = rotation;
 
         m_constraints = new TrapezoidProfile.Constraints(1.75, 1.75);
-        m_controller = new ProfiledPIDController(0.08, 0.0, 0.005, m_constraints);
+        m_controller = new ProfiledPIDController(0.08, 0.05, 0.005, m_constraints);
         m_controller.setGoal(0);
     }
 
     @Override
     public void execute() {
         if (States.shooterState == ShooterStates.preShoot && m_Limelight.hasTarget()){
-            m_subsystem.drive(throttle.getAsDouble(), m_controller.calculate(m_Limelight.getTx().getDegrees()));
+            m_subsystem.drive(throttle.getAsDouble(), m_controller.calculate(m_Limelight.getTx().getDegrees()), true);
         } else{
-            m_subsystem.drive(throttle.getAsDouble(), rotation.getAsDouble());
+            m_subsystem.drive(throttle.getAsDouble(), rotation.getAsDouble(), true);
         }
     }
 }

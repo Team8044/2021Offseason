@@ -23,10 +23,10 @@ public class ExampleAuto extends SequentialCommandGroup {
     TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)), // Start at the origin facing the +X direction
         List.of(                              // Pass through these two interior waypoints, making an 's' curve path
-          new Translation2d(1, 1), 
-          new Translation2d(2, -1)
+          new Translation2d(2, 2), 
+          new Translation2d(5, -2)
         ), 
-        new Pose2d(3, 0, new Rotation2d(0)), // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(7, 0, new Rotation2d(0)), // End 3 meters straight ahead of where we started, facing forward
       Constants.AutoConstants.trajConfig);
 
   public ExampleAuto(DriveTrain m_robotDrive) {
@@ -42,6 +42,7 @@ public class ExampleAuto extends SequentialCommandGroup {
             m_robotDrive);
 
     addCommands(
+      new InstantCommand(() -> m_robotDrive.zeroGyro()),
       new InstantCommand(() -> m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose())),
       ramseteCommand
     );

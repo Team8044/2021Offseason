@@ -35,6 +35,7 @@ public class RobotContainer {
     private final JoystickButton outakeButton = new JoystickButton(driver, XboxController.Button.kY.value);
     private final POVButton intakeExtendButton = new POVButton(driver, 180);
     private final POVButton intakeRetractButton = new POVButton(driver, 0);
+    private final JoystickButton zeroGyroButton = new JoystickButton(driver, XboxController.Button.kStart.value);
 
     /* Operator Buttons */
     private final JoystickButton shootButton = new JoystickButton(operator, XboxController.Button.kA.value);
@@ -81,6 +82,9 @@ public class RobotContainer {
         shooterActivateButton.whenPressed(new InstantCommand(() -> activate_Shooter()));
         shooterDeactivateButton.whenPressed(new InstantCommand(() -> deactivate_Shooter()));
 
+        /* DriveTrain */
+        zeroGyroButton.whenPressed(new InstantCommand(() -> zeroGyro()));
+
     }
 
     /* Shooter States */
@@ -92,11 +96,15 @@ public class RobotContainer {
         States.shooterState = ShooterStates.disabled;
     }
 
+    private void zeroGyro() {
+        m_robotDrive.zeroGyro();
+    }
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.*
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new ExampleAuto(m_robotDrive).andThen(() -> m_robotDrive.drive(0, 0));
+        return new ExampleAuto(m_robotDrive).andThen(() -> m_robotDrive.drive(0, 0, false));
     }
 }

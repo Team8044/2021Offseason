@@ -6,11 +6,9 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.lib.Controllers.SparkConstants;
 import frc.lib.Controllers.TalonConstants;
@@ -27,7 +25,7 @@ public final class Constants {
             new TalonConstants(2, talonCurrentLimit.supplyCurLim40, NeutralMode.Brake, InvertType.FollowMaster);
 
         public static final TalonConstants rightMaster = 
-            new TalonConstants(3, talonCurrentLimit.supplyCurLim40, NeutralMode.Brake, InvertType.None);
+            new TalonConstants(3, talonCurrentLimit.supplyCurLim40, NeutralMode.Brake, InvertType.InvertMotorOutput);
             
         public static final TalonConstants rightSlave = 
             new TalonConstants(4, talonCurrentLimit.supplyCurLim40, NeutralMode.Brake, InvertType.FollowMaster);
@@ -42,16 +40,9 @@ public final class Constants {
         public static final DifferentialDriveKinematics driveKinematics = 
             new DifferentialDriveKinematics(trackWidth);
 
-        /* Drive Motor Feed Forward Characterization Values */
-        public static final double driveKS = (0.648);
-        public static final double driveKV = (2.09);
-        public static final double driveKA = (0.286);
-        public static final SimpleMotorFeedforward driveFF = 
-            new SimpleMotorFeedforward(driveKS, driveKV, driveKA);
-
-        public static final PIDGains drivePID = new PIDGains(0.1, 0.0, 0.0, 0.0); //TODO
+        public static final PIDGains drivePID = new PIDGains(0.1, 0.0, 0.0, 0.046976); //TODO
         
-		public static final boolean invertGyro = false;
+		public static final boolean invertGyro = true;
     }
 
     public static final class Intake {
@@ -100,10 +91,10 @@ public final class Constants {
         public static final double[][] shooterMap = // TODO
         // {distance, shooterRPM, shooterAngle}
         {
-             {3.0, 3200.0, 10.0},
-             {4.0, 3200.0, 9.0},
-             {5.0, 3000.0, 8.0},
-             {6.0, 3000.0, 7.0},
+             {3.0, 2250.0, 11.0},
+             {3.4, 2250.0, 10.5},
+             {4.0, 2250.0, 10.05},
+             {4.4, 2250.0, 9.82},
              {7.0, 3100.0, 6.5},
              {9.0, 3100.0, 6.0},
         };
@@ -134,15 +125,10 @@ public final class Constants {
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
 
-        // Create a voltage constraint to ensure we don't accelerate too fast
-        public static final DifferentialDriveVoltageConstraint autoVoltageConstraint =
-            new DifferentialDriveVoltageConstraint(Drive.driveFF, Drive.driveKinematics, 10);
-
         // Config for Trajectory Generation
         public static final TrajectoryConfig trajConfig =
             new TrajectoryConfig(maxSpeed, maxAcelleration)
-                .setKinematics(Constants.Drive.driveKinematics)
-                .addConstraint(Constants.AutoConstants.autoVoltageConstraint);
+                .setKinematics(Constants.Drive.driveKinematics);
     }
 
 }

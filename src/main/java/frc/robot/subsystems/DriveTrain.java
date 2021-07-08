@@ -1,14 +1,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.Controllers.WPI_LazyTalonFX;
 import frc.lib.math.Boundaries;
@@ -27,6 +26,8 @@ public class DriveTrain extends SubsystemBase {
 
     private AHRS gyro;
 
+    private double previousP = 0;
+
     public DriveTrain() {
         leftMaster = new WPI_LazyTalonFX(Constants.Drive.leftMaster);
         leftSlave = new WPI_LazyTalonFX(Constants.Drive.leftSlave);
@@ -43,27 +44,26 @@ public class DriveTrain extends SubsystemBase {
         zeroGyro();
 
         m_robotDrive = new DifferentialDrive(leftMaster, rightMaster);
-        // m_robotDrive.setRightSideInverted(false); TODO
+        m_robotDrive.setRightSideInverted(false);
         m_odometry = new DifferentialDriveOdometry(getYaw());
+
+        
+        SmartDashboard.putNumber("Drive p", 0);
+        SmartDashboard.putNumber("Drive mps", 0);
     }
 
     /* For standard Teleop Drive */
-    public void drive(double speed, double rotation){
-        m_robotDrive.arcadeDrive(speed, rotation);
+    public void drive(double speed, double rotation, Boolean squaredInput){
+        m_robotDrive.arcadeDrive(speed, rotation, squaredInput);
     }
 
     /* Used for RamseteController for Following Auto Paths */
     public void setWheelState(double leftSpeed, double rightSpeed){
-        SimpleMotorFeedforward driveFF = Constants.Drive.driveFF;
-
         double leftDemand = Conversions.MPSToFalcon(leftSpeed, Constants.Drive.wheelCircumference, Constants.Drive.gearRatio);
         double rightDemand = Conversions.MPSToFalcon(rightSpeed, Constants.Drive.wheelCircumference, Constants.Drive.gearRatio);
 
-        double leftFF = (driveFF.calculate(leftDemand) / 12.0); //Divide by 12 because CTRE is in percent not voltage
-        double rightFF = (driveFF.calculate(rightDemand) / 12.0); //Divide by 12 because CTRE is in percent not voltage
-
-        leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFF);
-        rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFF);
+        leftMaster.set(ControlMode.Velocity, leftDemand);
+        rightMaster.set(ControlMode.Velocity, rightDemand);
     }
 
     public Rotation2d getYaw() {
@@ -104,5 +104,37 @@ public class DriveTrain extends SubsystemBase {
     @Override
     public void periodic() {
         m_odometry.update(getYaw(), getLeftPos(), getRightPos());
+
+        // double mps = SmartDashboard.getNumber("Drive mps", 0);
+
+        // if (previousP != SmartDashboard.getNumber("Drive p", 0)){
+        //     previousP = SmartDashboard.getNumber("Drive p", 0);
+        //     leftMaster.config_kP(0, previousP);
+        //     rightMaster.config_kP(0, previousP);
+        // }
+
+        // leftMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
+        //     mps, 
+        //     Constants.Drive.wheelCircumference, 
+        //     Constants.Drive.gearRatio));
+
+        // rightMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
+        //     mps, 
+        //     Constants.Drive.wheelCircumference, 
+        //     Constants.Drive.gearRatio));
+
+        SmartDashboard.putNumber("left drive", Conversions.falconToMPS(
+            leftMaster.getSelectedSensorVelocity(), 
+            Constants.Drive.wheelCircumference, 
+            Constants.Drive.gearRatio));
+
+        SmartDashboard.putNumber("right drive", Conversions.falconToMPS(
+            rightMaster.getSelectedSensorVelocity(), 
+            Constants.Drive.wheelCircumference, 
+            Constants.Drive.gearRatio));
+
+        SmartDashboard.putNumber("yaw", getYaw().getDegrees());
+        SmartDashboard.putNumber("x odo", m_odometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("y odo", m_odometry.getPoseMeters().getY());
     }
 }
