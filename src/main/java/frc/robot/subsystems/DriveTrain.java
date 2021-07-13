@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -23,6 +25,7 @@ public class DriveTrain extends SubsystemBase {
 
     private DifferentialDrive m_robotDrive;
     private DifferentialDriveOdometry m_odometry;
+    private SimpleMotorFeedforward driveFF;
 
     private AHRS gyro;
 
@@ -46,6 +49,7 @@ public class DriveTrain extends SubsystemBase {
         m_robotDrive = new DifferentialDrive(leftMaster, rightMaster);
         m_robotDrive.setRightSideInverted(false);
         m_odometry = new DifferentialDriveOdometry(getYaw());
+        driveFF = new SimpleMotorFeedforward(Constants.Drive.drivekS / 12, Constants.Drive.drivekV / 12, Constants.Drive.drivekA / 12);
 
         
         SmartDashboard.putNumber("Drive p", 0);
@@ -62,8 +66,8 @@ public class DriveTrain extends SubsystemBase {
         double leftDemand = Conversions.MPSToFalcon(leftSpeed, Constants.Drive.wheelCircumference, Constants.Drive.gearRatio);
         double rightDemand = Conversions.MPSToFalcon(rightSpeed, Constants.Drive.wheelCircumference, Constants.Drive.gearRatio);
 
-        leftMaster.set(ControlMode.Velocity, leftDemand);
-        rightMaster.set(ControlMode.Velocity, rightDemand);
+        leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, driveFF.calculate(leftDemand));
+        rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, driveFF.calculate(rightDemand));
     }
 
     public Rotation2d getYaw() {
@@ -105,23 +109,24 @@ public class DriveTrain extends SubsystemBase {
     public void periodic() {
         m_odometry.update(getYaw(), getLeftPos(), getRightPos());
 
-        // double mps = SmartDashboard.getNumber("Drive mps", 0);
+        double mps = SmartDashboard.getNumber("Drive mps", 0);
+        leftMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
+            mps, 
+            Constants.Drive.wheelCircumference, 
+            Constants.Drive.gearRatio));
 
-        // if (previousP != SmartDashboard.getNumber("Drive p", 0)){
-        //     previousP = SmartDashboard.getNumber("Drive p", 0);
-        //     leftMaster.config_kP(0, previousP);
-        //     rightMaster.config_kP(0, previousP);
-        // }
+        rightMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
+            mps, 
+            Constants.Drive.wheelCircumference, 
+            Constants.Drive.gearRatio));
 
-        // leftMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
-        //     mps, 
-        //     Constants.Drive.wheelCircumference, 
-        //     Constants.Drive.gearRatio));
+        
 
-        // rightMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
-        //     mps, 
-        //     Constants.Drive.wheelCircumference, 
-        //     Constants.Drive.gearRatio));
+        if (previousP != SmartDashboard.getNumber("Drive p", 0)){
+            previousP = SmartDashboard.getNumber("Drive p", 0);
+            leftMaster.config_kP(0, previousP);
+            rightMaster.config_kP(0, previousP);
+        }
 
         SmartDashboard.putNumber("left drive", Conversions.falconToMPS(
             leftMaster.getSelectedSensorVelocity(), 

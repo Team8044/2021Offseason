@@ -6,9 +6,11 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.lib.Controllers.SparkConstants;
 import frc.lib.Controllers.TalonConstants;
@@ -36,11 +38,15 @@ public final class Constants {
 		public static final double wheelDiameter = Units.inchesToMeters(6.0);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-        public static final double trackWidth = Units.inchesToMeters(25.27 - 2.063);
+        public static final double trackWidth = Units.inchesToMeters(25.27 - 2.063); //1.58478
         public static final DifferentialDriveKinematics driveKinematics = 
             new DifferentialDriveKinematics(trackWidth);
 
-        public static final PIDGains drivePID = new PIDGains(0.1, 0.0, 0.0, 0.046976); //TODO
+        public static final PIDGains drivePID = new PIDGains(0.3, 0.0, 0.0, 0.0); //TODO
+
+        public static final double drivekS = 0.663;
+        public static final double drivekV = 2.09;
+        public static final double drivekA = 0.273;
         
 		public static final boolean invertGyro = true;
     }
@@ -119,16 +125,23 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final double maxSpeed = 3; //MPS TODO
-        public static final double maxAcelleration = 3; //MPSS (meters per second squared) TODO
+        public static final double maxAcelleration = 1; //MPSS (meters per second squared) TODO
 
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
+        
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        public static final SimpleMotorFeedforward autoFF = 
+            new SimpleMotorFeedforward(Drive.drivekS, Drive.drivekV, Drive.drivekA);
+        public static final DifferentialDriveVoltageConstraint autoVoltageConstraint =
+            new DifferentialDriveVoltageConstraint(autoFF, Drive.driveKinematics, 10);
 
         // Config for Trajectory Generation
         public static final TrajectoryConfig trajConfig =
             new TrajectoryConfig(maxSpeed, maxAcelleration)
                 .setKinematics(Constants.Drive.driveKinematics);
+                // .addConstraint(autoVoltageConstraint);
     }
 
 }
