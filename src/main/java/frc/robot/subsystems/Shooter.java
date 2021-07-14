@@ -36,6 +36,7 @@ public class Shooter extends SubsystemBase {
         shooterSlave.follow(shooterMaster);
 
         angleMotor = new LazySparkMAX(Constants.Shooter.angleMotorConstants);
+        resetShooterAngle();
 
         angleController = new PIDController(
             Constants.Shooter.anglePID.kP,
@@ -80,6 +81,10 @@ public class Shooter extends SubsystemBase {
         angleMotor.set(ControlType.kDutyCycle, demand);
     }
 
+    public void resetShooterAngle(){
+        angleMotor.setPosition(0);
+    }
+
     private boolean resetShooterTilt(){
         if(angleMotor.getOutputCurrent() < 5.0){
             angleMotor.set(ControlType.kDutyCycle, -0.1);
@@ -119,5 +124,8 @@ public class Shooter extends SubsystemBase {
 
         SmartDashboard.putNumber("Shooter RPM", getShooterRPM());
         SmartDashboard.putNumber("Shooter Angle", getShooterAngle());
+
+        SmartDashboard.putNumber("MShooter Temp", shooterMaster.getTemperature());
+        SmartDashboard.putNumber("SShooter Temp", shooterSlave.getTemperature());
     }
 }

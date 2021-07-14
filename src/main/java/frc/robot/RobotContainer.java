@@ -27,8 +27,11 @@ public class RobotContainer {
     private final Joystick operator = new Joystick(1);
 
     /* Driver Controls */
-    private final int forwardAxis = XboxController.Axis.kLeftY.value;
-    private final int rotationAxis = XboxController.Axis.kRightX.value;
+    // private final int forwardAxis = XboxController.Axis.kLeftY.value;
+    private final int forwardAxis = XboxController.Axis.kRightTrigger.value;
+    private final int reverseAxis = XboxController.Axis.kLeftTrigger.value;
+    private final int rotationAxis = XboxController.Axis.kLeftX.value;
+    private final int quickTurnButton = XboxController.Button.kX.value;
 
     /* Driver Buttons */
     private final JoystickButton intakeButton = new JoystickButton(driver, XboxController.Button.kBumperRight.value);
@@ -41,6 +44,7 @@ public class RobotContainer {
     private final JoystickButton shootButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton shooterActivateButton = new JoystickButton(operator, XboxController.Button.kBumperRight.value);
     private final JoystickButton shooterDeactivateButton = new JoystickButton(operator, XboxController.Button.kBumperLeft.value);
+    private final JoystickButton zeroShooterAngleButton = new JoystickButton(operator, XboxController.Button.kStart.value);
 
     /* Subsystems */
     private final Vision m_Vision = new Vision();
@@ -56,8 +60,9 @@ public class RobotContainer {
         new teleopDrive(
             m_robotDrive, 
             m_Vision, 
-            () -> -driver.getRawAxis(forwardAxis), 
-            () -> driver.getRawAxis(rotationAxis)
+            () -> (driver.getRawAxis(forwardAxis) - driver.getRawAxis(reverseAxis)), 
+            () -> driver.getRawAxis(rotationAxis), 
+            () -> driver.getRawButton(quickTurnButton)
         )
     );
 
@@ -76,11 +81,12 @@ public class RobotContainer {
             new ParallelCommandGroup(
             new KickerControl(m_Kicker, 1.0), 
             new IndexerControl(m_Indexer, 1.0),
-            new IntakeControl(m_Intake, 1.0)
+            new IntakeControl(m_Intake, 1.0)            
             )
         );
         shooterActivateButton.whenPressed(new InstantCommand(() -> activate_Shooter()));
         shooterDeactivateButton.whenPressed(new InstantCommand(() -> deactivate_Shooter()));
+        zeroShooterAngleButton.whenPressed(new InstantCommand(() -> zeroShooterAngle()));
 
         /* DriveTrain */
         zeroGyroButton.whenPressed(new InstantCommand(() -> zeroGyro()));
@@ -100,11 +106,15 @@ public class RobotContainer {
         m_robotDrive.zeroGyro();
     }
 
+    private void zeroShooterAngle() {
+        m_Shooter.resetShooterAngle();
+    }
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.*
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new ExampleAuto(m_robotDrive).andThen(() -> m_robotDrive.drive(0, 0, false));
+        return new ExampleAuto(m_robotDrive).andThen(() -> m_robotDrive.arcadeDrive(0, 0, false));
     }
 }

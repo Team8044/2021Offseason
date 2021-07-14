@@ -53,17 +53,17 @@ public final class Constants {
 
     public static final class Intake {
         public static final SparkConstants motorConstants =
-            new SparkConstants(10, MotorType.kBrushed, 25, IdleMode.kCoast, true);
+            new SparkConstants(10, MotorType.kBrushed, 40, IdleMode.kCoast, false);
 
         public static final int pistonExtend = 0;
         public static final int pistonRetract = 1;
     }
 
     public static final class Indexer {
-        public static final TalonConstants indexerMotor1 =
-            new TalonConstants(7, talonCurrentLimit.supplyCurLim30, NeutralMode.Coast, InvertType.None);
+        public static final TalonConstants indexerMotorRight =
+            new TalonConstants(7, talonCurrentLimit.supplyCurLim30, NeutralMode.Coast, InvertType.InvertMotorOutput);
 
-        public static final TalonConstants indexerMotor2 =
+        public static final TalonConstants indexerMotorLeft =
             new TalonConstants(8, talonCurrentLimit.supplyCurLim30, NeutralMode.Coast, InvertType.None);
     }
 
@@ -100,9 +100,7 @@ public final class Constants {
              {3.0, 2250.0, 11.0},
              {3.4, 2250.0, 10.5},
              {4.0, 2250.0, 10.05},
-             {4.4, 2250.0, 9.82},
-             {7.0, 3100.0, 6.5},
-             {9.0, 3100.0, 6.0},
+             {4.4, 2250.0, 9.82}
         };
     }
 

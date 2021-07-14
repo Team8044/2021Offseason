@@ -29,7 +29,7 @@ public class DriveTrain extends SubsystemBase {
 
     private AHRS gyro;
 
-    private double previousP = 0;
+    // private double previousP = 0;
 
     public DriveTrain() {
         leftMaster = new WPI_LazyTalonFX(Constants.Drive.leftMaster);
@@ -53,13 +53,17 @@ public class DriveTrain extends SubsystemBase {
         driveFF = new SimpleMotorFeedforward(Constants.Drive.drivekS / 12, Constants.Drive.drivekV / 12, Constants.Drive.drivekA / 12);
 
         
-        SmartDashboard.putNumber("Drive p", 0);
-        SmartDashboard.putNumber("Drive mps", 0);
+        // SmartDashboard.putNumber("Drive p", 0);
+        // SmartDashboard.putNumber("Drive mps", 0);
     }
 
     /* For standard Teleop Drive */
-    public void drive(double speed, double rotation, Boolean squaredInput){
+    public void arcadeDrive(double speed, double rotation, Boolean squaredInput){
         m_robotDrive.arcadeDrive(speed, rotation, squaredInput);
+    }
+    
+    public void curvDrive(double speed, double rotation, Boolean quickTurn){
+        m_robotDrive.curvatureDrive(speed, rotation, quickTurn);
     }
 
     /* Used for RamseteController for Following Auto Paths */
@@ -110,14 +114,14 @@ public class DriveTrain extends SubsystemBase {
     public void periodic() {
         m_odometry.update(getYaw(), getLeftPos(), getRightPos());
 
-        double mps = SmartDashboard.getNumber("Drive mps", 0);
-        setWheelState(mps, mps);
+        // double mps = SmartDashboard.getNumber("Drive mps", 0);
+        // setWheelState(mps, mps);
 
-        if (previousP != SmartDashboard.getNumber("Drive p", 0)){
-            previousP = SmartDashboard.getNumber("Drive p", 0);
-            leftMaster.config_kP(0, previousP);
-            rightMaster.config_kP(0, previousP);
-        }
+        // if (previousP != SmartDashboard.getNumber("Drive p", 0)){
+        //     previousP = SmartDashboard.getNumber("Drive p", 0);
+        //     leftMaster.config_kP(0, previousP);
+        //     rightMaster.config_kP(0, previousP);
+        // }
 
         SmartDashboard.putNumber("left drive", Conversions.falconToMPS(
             leftMaster.getSelectedSensorVelocity(), 
@@ -132,5 +136,13 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("yaw", getYaw().getDegrees());
         SmartDashboard.putNumber("x odo", m_odometry.getPoseMeters().getX());
         SmartDashboard.putNumber("y odo", m_odometry.getPoseMeters().getY());
+
+        SmartDashboard.putNumber("Left Amps", leftMaster.getSupplyCurrent());
+        SmartDashboard.putNumber("Right Amps", rightMaster.getSupplyCurrent());
+
+        SmartDashboard.putNumber("LDrive Temp", leftMaster.getTemperature());
+        SmartDashboard.putNumber("RDrive Temp", rightMaster.getTemperature());
+
+
     }
 }
