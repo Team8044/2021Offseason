@@ -48,6 +48,7 @@ public class DriveTrain extends SubsystemBase {
 
         m_robotDrive = new DifferentialDrive(leftMaster, rightMaster);
         m_robotDrive.setRightSideInverted(false);
+        m_robotDrive.setSafetyEnabled(false);
         m_odometry = new DifferentialDriveOdometry(getYaw());
         driveFF = new SimpleMotorFeedforward(Constants.Drive.drivekS / 12, Constants.Drive.drivekV / 12, Constants.Drive.drivekA / 12);
 
@@ -110,17 +111,7 @@ public class DriveTrain extends SubsystemBase {
         m_odometry.update(getYaw(), getLeftPos(), getRightPos());
 
         double mps = SmartDashboard.getNumber("Drive mps", 0);
-        leftMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
-            mps, 
-            Constants.Drive.wheelCircumference, 
-            Constants.Drive.gearRatio));
-
-        rightMaster.set(ControlMode.Velocity, Conversions.MPSToFalcon(
-            mps, 
-            Constants.Drive.wheelCircumference, 
-            Constants.Drive.gearRatio));
-
-        
+        setWheelState(mps, mps);
 
         if (previousP != SmartDashboard.getNumber("Drive p", 0)){
             previousP = SmartDashboard.getNumber("Drive p", 0);

@@ -35,8 +35,6 @@ public class WPI_LazyTalonFX extends WPI_TalonFX {
         super.config_kI(0, pidGains.kI);
         super.config_kD(0, pidGains.kD);
         super.config_kF(0, pidGains.kFF);
-        super.configNominalOutputForward(0);
-        super.configNominalOutputReverse(0);
         super.configPeakOutputForward(pidGains.kMaxForward);
         super.configPeakOutputReverse(pidGains.kMaxReverse);
     }
