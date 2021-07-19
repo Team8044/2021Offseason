@@ -14,19 +14,22 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class teleopDrive extends CommandBase {
-    private final DriveTrain m_subsystem;
+    private final DriveTrain m_driveTrain;
     private final Limelight m_Limelight;
 
     DoubleSupplier throttle;
     DoubleSupplier rotation;
     BooleanSupplier quickTurn;
 
+    double throttleDouble;
+    double rotationDouble;
+
     private final TrapezoidProfile.Constraints m_constraints;
     private final ProfiledPIDController m_controller;
 
-    public teleopDrive(DriveTrain subsystem, Vision m_Vision, DoubleSupplier throttle, DoubleSupplier rotation, BooleanSupplier quickTurn) {
-        m_subsystem = subsystem;
-        addRequirements(m_subsystem);
+    public teleopDrive(DriveTrain m_driveTrain, Vision m_Vision, DoubleSupplier throttle, DoubleSupplier rotation, BooleanSupplier quickTurn) {
+        this.m_driveTrain = m_driveTrain;
+        addRequirements(m_driveTrain);
         m_Limelight = m_Vision.limelight;
 
         this.throttle = throttle;
@@ -40,10 +43,15 @@ public class teleopDrive extends CommandBase {
 
     @Override
     public void execute() {
+        /* Deadbands */
+        throttleDouble = (Math.abs(throttle.getAsDouble()) < 0.1) ? 0 : throttle.getAsDouble();
+        rotationDouble = (Math.abs(rotation.getAsDouble()) < 0.1) ? 0 : rotation.getAsDouble();
+
         if (States.shooterState == ShooterStates.preShoot && m_Limelight.hasTarget()){
-            m_subsystem.arcadeDrive(throttle.getAsDouble(), m_controller.calculate(m_Limelight.getTx().getDegrees()), true);
+            // m_driveTrain.arcadeDrive(throttle.getAsDouble(), m_controller.calculate(m_Limelight.getTx().getDegrees()), true);
+            m_driveTrain.autoAim(throttleDouble);
         } else{
-            m_subsystem.curvDrive(throttle.getAsDouble(), rotation.getAsDouble(), quickTurn.getAsBoolean());
+            m_driveTrain.curvDrive(throttleDouble, rotationDouble, quickTurn.getAsBoolean());
         }
     }
 }

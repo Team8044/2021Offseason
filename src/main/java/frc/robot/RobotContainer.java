@@ -48,7 +48,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private final Vision m_Vision = new Vision();
-    private final DriveTrain m_robotDrive = new DriveTrain();
+    private final DriveTrain m_robotDrive = new DriveTrain(m_Vision);
     private final Intake m_Intake = new Intake();
     private final Indexer m_Indexer = new Indexer();
     private final Kicker m_Kicker = new Kicker();

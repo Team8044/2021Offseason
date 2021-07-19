@@ -4,20 +4,22 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.Controllers.WPI_LazyTalonFX;
 import frc.lib.math.Boundaries;
 import frc.lib.math.Conversions;
+import frc.lib.util.Limelight;
 import frc.robot.Constants;
 
 public class DriveTrain extends SubsystemBase {
-
     private WPI_LazyTalonFX leftMaster;
     private WPI_LazyTalonFX leftSlave;
     private WPI_LazyTalonFX rightMaster;
@@ -26,12 +28,16 @@ public class DriveTrain extends SubsystemBase {
     private DifferentialDrive m_robotDrive;
     private DifferentialDriveOdometry m_odometry;
     private SimpleMotorFeedforward driveFF;
+    
+    private final TrapezoidProfile.Constraints m_constraints;
+    private final ProfiledPIDController m_controller;
+    private final Limelight m_Limelight;
 
     private AHRS gyro;
 
     // private double previousP = 0;
 
-    public DriveTrain() {
+    public DriveTrain(Vision m_Vision) {
         leftMaster = new WPI_LazyTalonFX(Constants.Drive.leftMaster);
         leftSlave = new WPI_LazyTalonFX(Constants.Drive.leftSlave);
         rightMaster = new WPI_LazyTalonFX(Constants.Drive.rightMaster);
@@ -51,6 +57,11 @@ public class DriveTrain extends SubsystemBase {
         m_robotDrive.setSafetyEnabled(false);
         m_odometry = new DifferentialDriveOdometry(getYaw());
         driveFF = new SimpleMotorFeedforward(Constants.Drive.drivekS / 12, Constants.Drive.drivekV / 12, Constants.Drive.drivekA / 12);
+        
+        m_constraints = new TrapezoidProfile.Constraints(1.75, 1.75);
+        m_controller = new ProfiledPIDController(0.02, 0.0, 0.001, m_constraints);
+        m_controller.setGoal(0);
+        m_Limelight = m_Vision.limelight;
 
         
         // SmartDashboard.putNumber("Drive p", 0);
@@ -64,6 +75,10 @@ public class DriveTrain extends SubsystemBase {
     
     public void curvDrive(double speed, double rotation, Boolean quickTurn){
         m_robotDrive.curvatureDrive(speed, rotation, quickTurn);
+    }
+
+    public void autoAim(double throttle){
+        m_robotDrive.arcadeDrive(throttle, m_controller.calculate(m_Limelight.getTx().getDegrees()), false);
     }
 
     /* Used for RamseteController for Following Auto Paths */
