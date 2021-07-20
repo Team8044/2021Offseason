@@ -27,7 +27,6 @@ public class RobotContainer {
     private final Joystick operator = new Joystick(1);
 
     /* Driver Controls */
-    // private final int forwardAxis = XboxController.Axis.kLeftY.value;
     private final int forwardAxis = XboxController.Axis.kRightTrigger.value;
     private final int reverseAxis = XboxController.Axis.kLeftTrigger.value;
     private final int rotationAxis = XboxController.Axis.kLeftX.value;

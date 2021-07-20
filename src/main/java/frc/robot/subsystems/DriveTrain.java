@@ -161,8 +161,8 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("x odo", m_odometry.getPoseMeters().getX());
         SmartDashboard.putNumber("y odo", m_odometry.getPoseMeters().getY());
 
-        SmartDashboard.putNumber("Left Amps", leftMaster.getSupplyCurrent());
-        SmartDashboard.putNumber("Right Amps", rightMaster.getSupplyCurrent());
+        SmartDashboard.putNumber("LDrive Amps", leftMaster.getSupplyCurrent());
+        SmartDashboard.putNumber("RDrive Amps", rightMaster.getSupplyCurrent());
 
         SmartDashboard.putNumber("LDrive Temp", leftMaster.getTemperature());
         SmartDashboard.putNumber("RDrive Temp", rightMaster.getTemperature());
