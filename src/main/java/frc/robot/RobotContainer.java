@@ -59,7 +59,6 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(
         new teleopDrive(
             m_robotDrive, 
-            m_Vision, 
             () -> (driver.getRawAxis(forwardAxis) - driver.getRawAxis(reverseAxis)), 
             () -> driver.getRawAxis(rotationAxis), 
             () -> driver.getRawButton(quickTurnButton)

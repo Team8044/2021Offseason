@@ -18,6 +18,7 @@ import frc.lib.math.Boundaries;
 import frc.lib.math.Conversions;
 import frc.lib.util.Limelight;
 import frc.robot.Constants;
+import frc.robot.States;
 
 public class DriveTrain extends SubsystemBase {
     private WPI_LazyTalonFX leftMaster;
@@ -77,10 +78,6 @@ public class DriveTrain extends SubsystemBase {
         m_robotDrive.curvatureDrive(speed, rotation, quickTurn);
     }
 
-    public void autoAim(double throttle){
-        m_robotDrive.arcadeDrive(throttle, m_controller.calculate(m_Limelight.getTx().getDegrees()), false);
-    }
-
     /* Used for RamseteController for Following Auto Paths */
     public void setWheelState(double leftSpeed, double rightSpeed){
         double leftDemand = Conversions.MPSToFalcon(leftSpeed, Constants.Drive.wheelCircumference, Constants.Drive.gearRatio);
@@ -128,6 +125,18 @@ public class DriveTrain extends SubsystemBase {
     @Override
     public void periodic() {
         m_odometry.update(getYaw(), getLeftPos(), getRightPos());
+        
+        switch(States.shooterState){
+            case notCalibrated:
+                break;
+
+            case disabled:
+                break;
+                
+            case preShoot:
+                m_robotDrive.arcadeDrive(0.0, m_controller.calculate(m_Limelight.getTx().getDegrees()), false);
+                break;
+        }
 
         // double mps = SmartDashboard.getNumber("Drive mps", 0);
         // setWheelState(mps, mps);
