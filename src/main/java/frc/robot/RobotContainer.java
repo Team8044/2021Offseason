@@ -3,8 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.States.ShooterStates;
-import frc.robot.autos.AutoCode;
-import frc.robot.autos.ExampleAuto;
+import frc.robot.autos.ShootAndDriveBack;
 import frc.robot.commands.IndexerControl;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.IntakePistonControl;
@@ -54,17 +53,17 @@ public class RobotContainer {
     private final Shooter m_Shooter = new Shooter(m_Vision);
 
     public RobotContainer() {
-    /* Teleop Drive */
-    m_robotDrive.setDefaultCommand(
-        new teleopDrive(
-            m_robotDrive, 
-            () -> (driver.getRawAxis(forwardAxis) - driver.getRawAxis(reverseAxis)), 
-            () -> driver.getRawAxis(rotationAxis), 
-            () -> driver.getRawButton(quickTurnButton)
-        )
-    );
+        /* Teleop Drive */
+        m_robotDrive.setDefaultCommand(
+            new teleopDrive(
+                m_robotDrive, 
+                () -> (driver.getRawAxis(forwardAxis) - driver.getRawAxis(reverseAxis)), 
+                () -> driver.getRawAxis(rotationAxis), 
+                () -> driver.getRawButton(quickTurnButton)
+            )
+        );
 
-    configureButtonBindings();
+        configureButtonBindings();
     }
 
     private void configureButtonBindings() {
@@ -108,6 +107,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new AutoCode(m_robotDrive, m_Kicker, m_Indexer, m_Intake).andThen(() -> m_robotDrive.arcadeDrive(0, 0, false));
+        return new ShootAndDriveBack(m_robotDrive, m_Kicker, m_Indexer, m_Intake);
     }
 }
