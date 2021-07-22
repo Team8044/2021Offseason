@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,12 +16,13 @@ import frc.lib.util.InterpolatableTreeMap;
 import frc.lib.util.Limelight;
 import frc.robot.Constants;
 import frc.robot.States;
-import frc.robot.States.ShooterStates;
 
 public class Shooter extends SubsystemBase {
     private LazyTalonFX shooterMaster;
     private LazyTalonFX shooterSlave;
     private LazySparkMAX angleMotor;
+
+    private DutyCycleEncoder angleEncoder;
 
     private InterpolatableTreeMap<Double> shooterMap = new InterpolatableTreeMap<>();
     private InterpolatableTreeMap<Double> angleMap = new InterpolatableTreeMap<>();
@@ -36,7 +39,7 @@ public class Shooter extends SubsystemBase {
         shooterSlave.follow(shooterMaster);
 
         angleMotor = new LazySparkMAX(Constants.Shooter.angleMotorConstants);
-        resetShooterAngle();
+        angleEncoder = new DutyCycleEncoder(new DigitalInput(Constants.Shooter.angleEncoderPort));
 
         angleController = new PIDController(
             Constants.Shooter.anglePID.kP,
@@ -66,7 +69,10 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getShooterAngle(){
-        return angleMotor.getPosition();
+        double position = angleEncoder.get() * 360;
+        position = 360 - position;
+        position = position - Constants.Shooter.angleEncoderOffset;
+        return position;
     }
 
     public void setShooterAngle(double angle){
@@ -77,35 +83,13 @@ public class Shooter extends SubsystemBase {
         else if (angle > Constants.Shooter.angleForwardLimit) {
             finalAngle = Constants.Shooter.angleForwardLimit;
         }
-        double demand = angleController.calculate(angleMotor.getPosition(), finalAngle);
+        double demand = angleController.calculate(getShooterAngle(), finalAngle);
         angleMotor.set(ControlType.kDutyCycle, demand);
-    }
-
-    public void resetShooterAngle(){
-        angleMotor.setPosition(0);
-    }
-
-    private boolean resetShooterTilt(){
-        if(angleMotor.getOutputCurrent() < 5.0){
-            angleMotor.set(ControlType.kDutyCycle, -0.1);
-            return false;
-        } else{
-            angleMotor.set(ControlType.kDutyCycle, 0);
-            angleMotor.setPosition(0);
-            return true;
-        }
     }
 
     @Override
     public void periodic() {
         switch(States.shooterState){
-            case notCalibrated:        
-                if(resetShooterTilt()){
-                    States.shooterState = ShooterStates.disabled;
-                }
-                shooterMaster.set(ControlMode.PercentOutput, 0);
-                break;
-
             case disabled:
                 shooterMaster.set(ControlMode.PercentOutput, 0);
                 angleMotor.set(ControlType.kDutyCycle, 0);

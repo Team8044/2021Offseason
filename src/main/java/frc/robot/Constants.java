@@ -82,13 +82,15 @@ public final class Constants {
         public static final SparkConstants angleMotorConstants =
             new SparkConstants(9, MotorType.kBrushless, 60, IdleMode.kCoast, false);
 
+        public static final int angleEncoderPort = 9;
+        public static final double angleEncoderOffset = 285.0;
+
         public static final PIDGains shooterPID = new PIDGains(0.1, 0.0, 0.0, 0.046976);
-        public static final PIDGains anglePID = new PIDGains(0.175, 0.0, 0.0, 0.0);
+        public static final PIDGains anglePID = new PIDGains(0.01, 0.001, 0.0, 0.0);
 
         public static final double shooterGearRatio = (1.0 / 1.0);
-        public static final double angleGearRatio = (1.0 / 1.0);
 
-        public static final float angleForwardLimit = 12;
+        public static final float angleForwardLimit = 50;
         public static final float angleReverseLimit = 0;
 
         public static final boolean calibrationMode = false;
@@ -99,7 +101,7 @@ public final class Constants {
         {
              {3.0, 2250.0, 11.0},
              {3.4, 2250.0, 10.5},
-             {4.0, 2250.0, 10.05},
+             {4.0, 2250.0, 10.5},
              {4.4, 2250.0, 9.82},
              {5.0, 2250.0, 9.4},
              {5.5, 2250.0, 9.14},

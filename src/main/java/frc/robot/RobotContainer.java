@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.States.ShooterStates;
+import frc.robot.autos.AutoCode;
 import frc.robot.autos.ExampleAuto;
 import frc.robot.commands.IndexerControl;
 import frc.robot.commands.IntakeControl;
@@ -43,7 +44,6 @@ public class RobotContainer {
     private final JoystickButton shootButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton shooterActivateButton = new JoystickButton(operator, XboxController.Button.kBumperRight.value);
     private final JoystickButton shooterDeactivateButton = new JoystickButton(operator, XboxController.Button.kBumperLeft.value);
-    private final JoystickButton zeroShooterAngleButton = new JoystickButton(operator, XboxController.Button.kStart.value);
 
     /* Subsystems */
     private final Vision m_Vision = new Vision();
@@ -84,7 +84,6 @@ public class RobotContainer {
         );
         shooterActivateButton.whenPressed(new InstantCommand(() -> activate_Shooter()));
         shooterDeactivateButton.whenPressed(new InstantCommand(() -> deactivate_Shooter()));
-        zeroShooterAngleButton.whenPressed(new InstantCommand(() -> zeroShooterAngle()));
 
         /* DriveTrain */
         zeroGyroButton.whenPressed(new InstantCommand(() -> zeroGyro()));
@@ -104,15 +103,11 @@ public class RobotContainer {
         m_robotDrive.zeroGyro();
     }
 
-    private void zeroShooterAngle() {
-        m_Shooter.resetShooterAngle();
-    }
-
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.*
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new ExampleAuto(m_robotDrive).andThen(() -> m_robotDrive.arcadeDrive(0, 0, false));
+        return new AutoCode(m_robotDrive, m_Kicker, m_Indexer, m_Intake).andThen(() -> m_robotDrive.arcadeDrive(0, 0, false));
     }
 }

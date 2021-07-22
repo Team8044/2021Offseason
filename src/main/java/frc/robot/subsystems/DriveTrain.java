@@ -127,9 +127,6 @@ public class DriveTrain extends SubsystemBase {
         m_odometry.update(getYaw(), getLeftPos(), getRightPos());
         
         switch(States.shooterState){
-            case notCalibrated:
-                break;
-
             case disabled:
                 break;
                 

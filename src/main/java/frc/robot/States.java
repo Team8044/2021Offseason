@@ -9,8 +9,8 @@ public class States {
      * </p> preShoot: Shooter SpinUp, Shooter Tilt to angle, drivetrain target lock
      */
     public static enum ShooterStates {
-        notCalibrated, disabled, preShoot
+        disabled, preShoot
     }
 
-    public static ShooterStates shooterState = ShooterStates.notCalibrated;
+    public static ShooterStates shooterState = ShooterStates.disabled;
 }
