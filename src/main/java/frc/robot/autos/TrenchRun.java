@@ -25,11 +25,11 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-// Start directly in front of the goal
+/* Start o the side of the goal, shoot, trench run, pickup 3 balls, return to goal, shoot */
 
-public class ShootAndDriveBack extends SequentialCommandGroup {
+public class TrenchRun extends SequentialCommandGroup {
 
-    public ShootAndDriveBack(DriveTrain m_robotDrive, Kicker m_Kicker, Indexer m_Indexer, Intake m_Intake) {
+    public TrenchRun(DriveTrain m_robotDrive, Kicker m_Kicker, Indexer m_Indexer, Intake m_Intake) {
         addRequirements(m_robotDrive);
 
         RamseteCommand driveBackwards =

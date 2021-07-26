@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.Controllers.WPI_LazyTalonFX;
 import frc.lib.math.Boundaries;
@@ -30,7 +29,6 @@ public class DriveTrain extends SubsystemBase {
     private DifferentialDriveOdometry m_odometry;
     private SimpleMotorFeedforward driveFF;
     
-    private final TrapezoidProfile.Constraints m_constraints;
     private final ProfiledPIDController m_controller;
     private final Limelight m_Limelight;
 
@@ -56,11 +54,11 @@ public class DriveTrain extends SubsystemBase {
         m_robotDrive = new DifferentialDrive(leftMaster, rightMaster);
         m_robotDrive.setRightSideInverted(false);
         m_robotDrive.setSafetyEnabled(false);
+
         m_odometry = new DifferentialDriveOdometry(getYaw());
         driveFF = new SimpleMotorFeedforward(Constants.Drive.drivekS / 12, Constants.Drive.drivekV / 12, Constants.Drive.drivekA / 12);
         
-        m_constraints = new TrapezoidProfile.Constraints(1.75, 1.75);
-        m_controller = new ProfiledPIDController(0.02, 0.0, 0.001, m_constraints);
+        m_controller = new ProfiledPIDController(Constants.Drive.autoAimPID.kP, Constants.Drive.autoAimPID.kI, Constants.Drive.autoAimPID.kD, Constants.Drive.autoAimConstraints);
         m_controller.setGoal(0);
         m_Limelight = m_Vision.limelight;
 

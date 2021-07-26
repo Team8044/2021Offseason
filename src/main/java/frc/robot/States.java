@@ -4,9 +4,8 @@ public class States {
 
     /**
      * Shooter States:
-     * </p> notCalibrated: Shooter Angle motor needs to complete zeroing sequence
-     * </p> disabled: Shooter Disabled and Shooter Tilt at 0
-     * </p> preShoot: Shooter SpinUp, Shooter Tilt to angle, drivetrain target lock
+     * </p> disabled: Auto Aim Disabled, Shooter Disabled, and Shooter Tilt at 0
+     * </p> preShoot: Drivetrain Auto Aim, Shooter SpinUp, Shooter Tilt to angle
      */
     public static enum ShooterStates {
         disabled, preShoot

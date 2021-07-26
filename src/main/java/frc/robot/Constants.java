@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.lib.Controllers.SparkConstants;
@@ -43,6 +44,9 @@ public final class Constants {
             new DifferentialDriveKinematics(trackWidth);
 
         public static final PIDGains drivePID = new PIDGains(0.3, 0.0, 0.0, 0.0); //TODO
+
+        public static final PIDGains autoAimPID = new PIDGains(0.02, 0.0, 0.001, 0.0);
+        public static final Constraints autoAimConstraints = new Constraints(1.75, 1.75);
 
         public static final double drivekS = 0.663;
         public static final double drivekV = 2.09;
