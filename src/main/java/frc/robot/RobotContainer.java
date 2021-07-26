@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.States.ShooterStates;
 import frc.robot.autos.ShootAndDriveBack;
+import frc.robot.autos.TrenchRun;
 import frc.robot.commands.IndexerControl;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.IntakePistonControl;
@@ -107,6 +108,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new ShootAndDriveBack(m_robotDrive, m_Kicker, m_Indexer, m_Intake);
+        return new TrenchRun(m_robotDrive, m_Kicker, m_Indexer, m_Intake);
     }
 }

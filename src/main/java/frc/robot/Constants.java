@@ -43,7 +43,7 @@ public final class Constants {
         public static final DifferentialDriveKinematics driveKinematics = 
             new DifferentialDriveKinematics(trackWidth);
 
-        public static final PIDGains drivePID = new PIDGains(0.3, 0.0, 0.0, 0.0); //TODO
+        public static final PIDGains drivePID = new PIDGains(0.21, 0.0, 0.0, 0.0); //TODO
 
         public static final PIDGains autoAimPID = new PIDGains(0.02, 0.0, 0.001, 0.0);
         public static final Constraints autoAimConstraints = new Constraints(1.75, 1.75);
@@ -103,16 +103,12 @@ public final class Constants {
         public static final double[][] shooterMap = // TODO
         // {distance, shooterRPM, shooterAngle}
         {
-             {3.0, 2250.0, 11.0},
-             {3.4, 2250.0, 10.5},
-             {4.0, 2250.0, 10.5},
-             {4.4, 2250.0, 9.82},
-             {5.0, 2250.0, 9.4},
-             {5.5, 2250.0, 9.14},
-             {6.0, 2250.0, 9.14},
-             {6.5,2250.0, 9.2},
-             {7.0,2250.0, 9.5},
-             {7.5,2250.0, 9.5}
+            {3.0, 2500.0, 40.0},
+            {4.0, 2500.0, 35.0},
+            {5.1, 2500.0, 27.0},
+            {6.1, 2600.0, 26.5},
+            {7.0, 2600.0, 26.0},
+            {8.0, 2700.0, 26.0}
         };
     }
 
@@ -135,7 +131,7 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final double maxSpeed = 3; //MPS TODO
-        public static final double maxAcelleration = 1; //MPSS (meters per second squared) TODO
+        public static final double maxAcelleration = 3; //MPSS (meters per second squared) TODO
 
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
         public static final double kRamseteB = 2;

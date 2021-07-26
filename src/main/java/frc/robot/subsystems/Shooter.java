@@ -72,6 +72,7 @@ public class Shooter extends SubsystemBase {
         double position = angleEncoder.get() * 360;
         position = 360 - position;
         position = position - Constants.Shooter.angleEncoderOffset;
+        position = Math.round(position * 100.0) / 100.0; // Rounding to 2 decimal places
         return position;
     }
 

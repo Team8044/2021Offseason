@@ -35,12 +35,27 @@ public class teleopDrive extends CommandBase {
         rotationDouble = (Math.abs(rotation.getAsDouble()) < 0.1) ? 0 : rotation.getAsDouble();
 
         if (States.shooterState != ShooterStates.preShoot){
-            if (!quickTurn.getAsBoolean()){
-                m_driveTrain.curvDrive(throttleDouble, rotationDouble / 1.5, quickTurn.getAsBoolean());
+            // if (!quickTurn.getAsBoolean()){
+            //     m_driveTrain.curvDrive(throttleDouble, rotationDouble / 1.5, quickTurn.getAsBoolean());
+            // }
+            // else{
+            //     m_driveTrain.curvDrive(throttleDouble, rotationDouble, quickTurn.getAsBoolean());
+            // }
+            if (throttleDouble < 0){
+                throttleDouble = -Math.pow(throttleDouble, 2);
             }
-            else{
-                m_driveTrain.curvDrive(throttleDouble, rotationDouble, quickTurn.getAsBoolean());
+            else {
+                throttleDouble = Math.pow(throttleDouble, 2);
             }
+
+            if (rotationDouble < 0){
+                rotationDouble = -Math.pow(rotationDouble, 2);
+            }
+            else {
+                rotationDouble = Math.pow(rotationDouble, 2);
+            }
+            
+            m_driveTrain.curvDrive(throttleDouble, rotationDouble, quickTurn.getAsBoolean());
         }
     }
 }

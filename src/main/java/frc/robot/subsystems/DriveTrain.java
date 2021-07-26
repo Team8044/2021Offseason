@@ -2,8 +2,13 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -11,6 +16,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.Controllers.WPI_LazyTalonFX;
 import frc.lib.math.Boundaries;
@@ -31,6 +37,9 @@ public class DriveTrain extends SubsystemBase {
     
     private final ProfiledPIDController m_controller;
     private final Limelight m_Limelight;
+
+    private int currentNeutral = 0;
+    private DriverStation ds;
 
     private AHRS gyro;
 
@@ -61,6 +70,7 @@ public class DriveTrain extends SubsystemBase {
         m_controller = new ProfiledPIDController(Constants.Drive.autoAimPID.kP, Constants.Drive.autoAimPID.kI, Constants.Drive.autoAimPID.kD, Constants.Drive.autoAimConstraints);
         m_controller.setGoal(0);
         m_Limelight = m_Vision.limelight;
+        ds = DriverStation.getInstance();
 
         
         // SmartDashboard.putNumber("Drive p", 0);
@@ -100,6 +110,13 @@ public class DriveTrain extends SubsystemBase {
         m_odometry.resetPosition(pose, getYaw());
     }
 
+    public void setNeutral(NeutralMode neutral){
+        leftMaster.setNeutralMode(neutral);
+        leftSlave.setNeutralMode(neutral);
+        rightMaster.setNeutralMode(neutral);
+        rightSlave.setNeutralMode(neutral);
+      }
+
     public Pose2d getPose() {
         return m_odometry.getPoseMeters();
     }
@@ -133,6 +150,17 @@ public class DriveTrain extends SubsystemBase {
                 break;
         }
 
+        /* Automatical set to coast if disabled */
+        if (ds.isEnabled() && currentNeutral == 1){
+            setNeutral(NeutralMode.Brake);
+            currentNeutral = 0;
+          }
+          
+          if (ds.isDisabled() && currentNeutral == 0){
+            setNeutral(NeutralMode.Coast);
+            currentNeutral = 1;
+          }
+
         // double mps = SmartDashboard.getNumber("Drive mps", 0);
         // setWheelState(mps, mps);
 
@@ -163,5 +191,20 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("RDrive Temp", rightMaster.getTemperature());
 
 
+
+        
+        /* Falcon Dashboard Setup*/
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable table = inst.getTable("Live_Dashboard");
+
+        /* PoseEstimator Values */
+        NetworkTableEntry robotX = table.getEntry("robotX");
+        NetworkTableEntry robotY = table.getEntry("robotY");
+        NetworkTableEntry robotHeading = table.getEntry("robotHeading");
+
+        robotX.setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getX()));
+        robotY.setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getY()));
+        robotHeading.setDouble(m_odometry.getPoseMeters().getRotation().getRadians());
+        table.getEntry("isFollowingPath").setBoolean(true);
     }
 }
