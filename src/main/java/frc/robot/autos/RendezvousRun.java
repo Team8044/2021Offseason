@@ -17,7 +17,6 @@ import java.util.List;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.util.Units;
@@ -27,37 +26,28 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-/* Start on the right side of the goal, shoot, trench run, pickup 3 balls, return to goal, shoot */
+/* Start on the left side of the goal, shoot, rendezvous run, pickup 3-5 balls, return to goal, shoot */
 
-public class TrenchRun extends SequentialCommandGroup {
+public class RendezvousRun extends SequentialCommandGroup {
 
-    public TrenchRun(DriveTrain m_robotDrive, Kicker m_Kicker, Indexer m_Indexer, Intake m_Intake) {
+    public RendezvousRun(DriveTrain m_robotDrive, Kicker m_Kicker, Indexer m_Indexer, Intake m_Intake) {
         addRequirements(m_robotDrive);
 
-        Trajectory driveToTrench = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(4.5), Rotation2d.fromDegrees(16.0)), 
-            List.of(                              
-                new Translation2d(Units.feetToMeters(37.7), Units.feetToMeters(2.6)),
-                new Translation2d(Units.feetToMeters(33.0), Units.feetToMeters(2.2))
+        Trajectory rendezvousRun = TrajectoryGenerator.generateTrajectory(
+            List.of(
+                new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(11.2), Rotation2d.fromDegrees(344.0)), 
+                new Pose2d(Units.feetToMeters(32.1), Units.feetToMeters(13.8), Rotation2d.fromDegrees(23.0)),
+                new Pose2d(Units.feetToMeters(29.5), Units.feetToMeters(12.7), Rotation2d.fromDegrees(23.0)),
+                new Pose2d(Units.feetToMeters(30.7), Units.feetToMeters(10.5), Rotation2d.fromDegrees(203.0)),
+                new Pose2d(Units.feetToMeters(34.4), Units.feetToMeters(12.2), Rotation2d.fromDegrees(203.0)),
+                new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(11.2), Rotation2d.fromDegrees(344.0))
             ), 
-            new Pose2d(Units.feetToMeters(27.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0)), 
             Constants.AutoConstants.trajConfig.setReversed(true)
         );
 
-        Trajectory driveToTarget = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(Units.feetToMeters(27.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0)), 
-            List.of( 
-                new Translation2d(Units.feetToMeters(33.0), Units.feetToMeters(2.2)),
-                new Translation2d(Units.feetToMeters(37.7), Units.feetToMeters(2.6))
-            ), 
-            new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(4.5), Rotation2d.fromDegrees(16.0)), 
-            Constants.AutoConstants.trajConfig.setReversed(false)
-        );
-            
-
         addCommands(
             new InstantCommand(() -> m_robotDrive.zeroGyro()),
-            new InstantCommand(() -> m_robotDrive.resetOdometry(new Pose2d(driveToTrench.getInitialPose().getTranslation(), new Rotation2d()))),
+            new InstantCommand(() -> m_robotDrive.resetOdometry(new Pose2d(rendezvousRun.getInitialPose().getTranslation(), new Rotation2d()))),
             new IntakePistonControl(m_Intake, true),
 
             /* Shoot from Starting Line */
@@ -71,10 +61,10 @@ public class TrenchRun extends SequentialCommandGroup {
             ),
             new InstantCommand(() -> States.shooterState = ShooterStates.disabled),
 
-            /* Drive through trench and pickup balls */
+            /* Drive through rendezvous and pickup balls */
             new ParallelDeadlineGroup(
                 new RamseteCommand(
-                    driveToTrench,
+                    rendezvousRun,
                     m_robotDrive::getPose,
                     new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
                     Constants.Drive.driveKinematics,
@@ -82,17 +72,6 @@ public class TrenchRun extends SequentialCommandGroup {
                     m_robotDrive
                 ),
                 new IntakeControl(m_Intake, 1.0)
-            ),
-            new InstantCommand(() -> m_robotDrive.arcadeDrive(0, 0, false)),
-
-            /* Drive back to goal */
-            new RamseteCommand(
-                driveToTarget,
-                m_robotDrive::getPose,
-                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-                Constants.Drive.driveKinematics,
-                (leftspeed, rightspeed) -> m_robotDrive.setWheelState(leftspeed, rightspeed),
-                m_robotDrive
             ),
             new InstantCommand(() -> m_robotDrive.arcadeDrive(0, 0, false)),
 

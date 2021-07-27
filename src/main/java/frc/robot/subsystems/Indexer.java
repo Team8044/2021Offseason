@@ -7,21 +7,21 @@ import frc.lib.Controllers.LazyVictorSPX;
 import frc.robot.Constants;
 
 public class Indexer extends SubsystemBase {
-  private LazyVictorSPX indexerMotorRight;
-  private LazyVictorSPX indexerMotorLeft;
+    private LazyVictorSPX indexerMotorRight;
+    private LazyVictorSPX indexerMotorLeft;
 
-  public Indexer() {
-    indexerMotorRight = new LazyVictorSPX(Constants.Indexer.indexerMotorRight);
-    indexerMotorLeft = new LazyVictorSPX(Constants.Indexer.indexerMotorLeft);
-  }
+    public Indexer() {
+        indexerMotorRight = new LazyVictorSPX(Constants.Indexer.indexerMotorRight);
+        indexerMotorLeft = new LazyVictorSPX(Constants.Indexer.indexerMotorLeft);
+    }
 
-  public void setPower(double power) {
-    indexerMotorRight.set(ControlMode.PercentOutput, power);
-    indexerMotorLeft.set(ControlMode.PercentOutput, power);
-  }
+    public void setPower(double power) {
+        indexerMotorRight.set(ControlMode.PercentOutput, power);
+        indexerMotorLeft.set(ControlMode.PercentOutput, power);
+    }
 
-  @Override
-  public void periodic() {
-    
-  }
+    @Override
+    public void periodic() {
+
+    }
 }

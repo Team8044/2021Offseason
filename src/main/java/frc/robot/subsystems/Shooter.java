@@ -22,13 +22,12 @@ public class Shooter extends SubsystemBase {
     private LazyTalonFX shooterSlave;
     private LazySparkMAX angleMotor;
 
-    private DutyCycleEncoder angleEncoder;
-
     private InterpolatableTreeMap<Double> shooterMap = new InterpolatableTreeMap<>();
     private InterpolatableTreeMap<Double> angleMap = new InterpolatableTreeMap<>();
     private Limelight limelight;
 
     private PIDController angleController;
+    private DutyCycleEncoder angleEncoder;
 
     public Shooter(Vision m_Vision) {
         limelight = m_Vision.limelight;

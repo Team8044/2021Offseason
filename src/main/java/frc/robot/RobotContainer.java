@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.States.ShooterStates;
-import frc.robot.autos.ShootAndDriveBack;
 import frc.robot.autos.TrenchRun;
 import frc.robot.commands.IndexerControl;
 import frc.robot.commands.IntakeControl;
@@ -77,9 +76,9 @@ public class RobotContainer {
         /* Shooting */
         shootButton.whileHeld(
             new ParallelCommandGroup(
-            new KickerControl(m_Kicker, 1.0), 
-            new IndexerControl(m_Indexer, 1.0),
-            new IntakeControl(m_Intake, 1.0)            
+                new KickerControl(m_Kicker, 1.0), 
+                new IndexerControl(m_Indexer, 1.0),
+                new IntakeControl(m_Intake, 1.0)            
             )
         );
         shooterActivateButton.whenPressed(new InstantCommand(() -> activate_Shooter()));

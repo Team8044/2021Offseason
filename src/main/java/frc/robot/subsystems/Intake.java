@@ -11,25 +11,25 @@ import frc.lib.Controllers.LazySparkMAX;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  private LazySparkMAX intake;
-  private DoubleSolenoid intakePiston;
+    private LazySparkMAX intake;
+    private DoubleSolenoid intakePiston;
 
-  public Intake() {
-    intake = new LazySparkMAX(Constants.Intake.motorConstants);
+    public Intake() {
+        intake = new LazySparkMAX(Constants.Intake.motorConstants);
 
-    intakePiston = new DoubleSolenoid(Constants.Intake.pistonExtend, Constants.Intake.pistonRetract);
-  }
+        intakePiston = new DoubleSolenoid(Constants.Intake.pistonExtend, Constants.Intake.pistonRetract);
+    }
     
-  public void setPower(double power){
-      intake.set(ControlType.kDutyCycle, power);
-  }
+    public void setPower(double power){
+        intake.set(ControlType.kDutyCycle, power);
+    }
 
-  public void setPiston(boolean extended){
-      intakePiston.set(extended ? kForward : kReverse);
-  }
+    public void setPiston(boolean extended){
+        intakePiston.set(extended ? kForward : kReverse);
+    }
 
-  @Override
-  public void periodic() {
-    
-  }
+    @Override
+    public void periodic() {
+
+    }
 }

@@ -42,9 +42,9 @@ public class ExampleAuto extends SequentialCommandGroup {
                 m_robotDrive);
 
         addCommands(
-        new InstantCommand(() -> m_robotDrive.zeroGyro()),
-        new InstantCommand(() -> m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose())),
-        ramseteCommand
+            new InstantCommand(() -> m_robotDrive.zeroGyro()),
+            new InstantCommand(() -> m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose())),
+            ramseteCommand
         );
     }
 

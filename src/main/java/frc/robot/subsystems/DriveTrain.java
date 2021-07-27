@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
@@ -43,8 +42,6 @@ public class DriveTrain extends SubsystemBase {
 
     private AHRS gyro;
 
-    // private double previousP = 0;
-
     public DriveTrain(Vision m_Vision) {
         leftMaster = new WPI_LazyTalonFX(Constants.Drive.leftMaster);
         leftSlave = new WPI_LazyTalonFX(Constants.Drive.leftSlave);
@@ -69,12 +66,9 @@ public class DriveTrain extends SubsystemBase {
         
         m_controller = new ProfiledPIDController(Constants.Drive.autoAimPID.kP, Constants.Drive.autoAimPID.kI, Constants.Drive.autoAimPID.kD, Constants.Drive.autoAimConstraints);
         m_controller.setGoal(0);
+
         m_Limelight = m_Vision.limelight;
         ds = DriverStation.getInstance();
-
-        
-        // SmartDashboard.putNumber("Drive p", 0);
-        // SmartDashboard.putNumber("Drive mps", 0);
     }
 
     /* For standard Teleop Drive */
@@ -115,31 +109,27 @@ public class DriveTrain extends SubsystemBase {
         leftSlave.setNeutralMode(neutral);
         rightMaster.setNeutralMode(neutral);
         rightSlave.setNeutralMode(neutral);
-      }
+    }
 
     public Pose2d getPose() {
         return m_odometry.getPoseMeters();
     }
 
-    public double getLeftPos(){
-        return Conversions.falconToMeters(
-            leftMaster.getSelectedSensorPosition(), 
-            Constants.Drive.wheelCircumference, 
-            Constants.Drive.gearRatio
-        );
-    }
-
-    public double getRightPos(){
-        return Conversions.falconToMeters(
-            rightMaster.getSelectedSensorPosition(), 
-            Constants.Drive.wheelCircumference, 
-            Constants.Drive.gearRatio
-        );
-    }
-
     @Override
     public void periodic() {
-        m_odometry.update(getYaw(), getLeftPos(), getRightPos());
+        m_odometry.update(
+            getYaw(), 
+            Conversions.falconToMeters(
+                leftMaster.getSelectedSensorPosition(), 
+                Constants.Drive.wheelCircumference, 
+                Constants.Drive.gearRatio
+            ), 
+            Conversions.falconToMeters(
+                rightMaster.getSelectedSensorPosition(), 
+                Constants.Drive.wheelCircumference, 
+                Constants.Drive.gearRatio
+            )
+        );
         
         switch(States.shooterState){
             case disabled:
@@ -150,35 +140,27 @@ public class DriveTrain extends SubsystemBase {
                 break;
         }
 
-        /* Automatical set to coast if disabled */
+        /* Automatical set drive motors to coast if disable, brake if enabled */
         if (ds.isEnabled() && currentNeutral == 1){
             setNeutral(NeutralMode.Brake);
             currentNeutral = 0;
-          }
-          
-          if (ds.isDisabled() && currentNeutral == 0){
+        }
+        else if (ds.isDisabled() && currentNeutral == 0){
             setNeutral(NeutralMode.Coast);
             currentNeutral = 1;
-          }
-
-        // double mps = SmartDashboard.getNumber("Drive mps", 0);
-        // setWheelState(mps, mps);
-
-        // if (previousP != SmartDashboard.getNumber("Drive p", 0)){
-        //     previousP = SmartDashboard.getNumber("Drive p", 0);
-        //     leftMaster.config_kP(0, previousP);
-        //     rightMaster.config_kP(0, previousP);
-        // }
+        }
 
         SmartDashboard.putNumber("left drive", Conversions.falconToMPS(
             leftMaster.getSelectedSensorVelocity(), 
             Constants.Drive.wheelCircumference, 
-            Constants.Drive.gearRatio));
+            Constants.Drive.gearRatio)
+        );
 
         SmartDashboard.putNumber("right drive", Conversions.falconToMPS(
             rightMaster.getSelectedSensorVelocity(), 
             Constants.Drive.wheelCircumference, 
-            Constants.Drive.gearRatio));
+            Constants.Drive.gearRatio)
+        );
 
         SmartDashboard.putNumber("yaw", getYaw().getDegrees());
         SmartDashboard.putNumber("x odo", m_odometry.getPoseMeters().getX());
@@ -193,18 +175,11 @@ public class DriveTrain extends SubsystemBase {
 
 
         
-        /* Falcon Dashboard Setup*/
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable table = inst.getTable("Live_Dashboard");
-
-        /* PoseEstimator Values */
-        NetworkTableEntry robotX = table.getEntry("robotX");
-        NetworkTableEntry robotY = table.getEntry("robotY");
-        NetworkTableEntry robotHeading = table.getEntry("robotHeading");
-
-        robotX.setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getX()));
-        robotY.setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getY()));
-        robotHeading.setDouble(m_odometry.getPoseMeters().getRotation().getRadians());
+        /* Putting Data on Falcon Dashboard */
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("Live_Dashboard");
+        table.getEntry("robotX").setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getX()));
+        table.getEntry("robotY").setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getY()));
+        table.getEntry("robotHeading").setDouble(m_odometry.getPoseMeters().getRotation().getRadians());
         table.getEntry("isFollowingPath").setBoolean(true);
     }
 }

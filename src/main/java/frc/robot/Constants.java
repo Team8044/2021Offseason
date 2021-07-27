@@ -32,7 +32,6 @@ public final class Constants {
             
         public static final TalonConstants rightSlave = 
             new TalonConstants(4, talonCurrentLimit.supplyCurLim40, NeutralMode.Brake, InvertType.FollowMaster);
-
         
         /* Drivebase Constants */
 		public static final double gearRatio = (9.47 / 1.0);
@@ -43,7 +42,7 @@ public final class Constants {
         public static final DifferentialDriveKinematics driveKinematics = 
             new DifferentialDriveKinematics(trackWidth);
 
-        public static final PIDGains drivePID = new PIDGains(0.21, 0.0, 0.0, 0.0); //TODO
+        public static final PIDGains drivePID = new PIDGains(0.21, 0.0, 0.0, 0.0);
 
         public static final PIDGains autoAimPID = new PIDGains(0.02, 0.0, 0.001, 0.0);
         public static final Constraints autoAimConstraints = new Constraints(1.75, 1.75);
@@ -100,7 +99,7 @@ public final class Constants {
         public static final boolean calibrationMode = false;
 
         /* Shooter Tuned Constants */
-        public static final double[][] shooterMap = // TODO
+        public static final double[][] shooterMap = 
         // {distance, shooterRPM, shooterAngle}
         {
             {3.0, 2500.0, 40.0},
@@ -111,9 +110,7 @@ public final class Constants {
             {8.0, 2700.0, 26.0}
         };
     }
-
     
-
     public static final class Vision {
         public static final double goalHeight = Units.inchesToMeters(81.0 + (17.0 / 2.0));
 
@@ -130,8 +127,8 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double maxSpeed = 3; //MPS TODO
-        public static final double maxAcelleration = 3; //MPSS (meters per second squared) TODO
+        public static final double maxSpeed = 3; //MPS
+        public static final double maxAcelleration = 3; //MPSS (meters per second squared)
 
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
         public static final double kRamseteB = 2;

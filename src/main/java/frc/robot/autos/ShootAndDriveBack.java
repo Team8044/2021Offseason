@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -32,26 +33,18 @@ public class ShootAndDriveBack extends SequentialCommandGroup {
     public ShootAndDriveBack(DriveTrain m_robotDrive, Kicker m_Kicker, Indexer m_Indexer, Intake m_Intake) {
         addRequirements(m_robotDrive);
 
-        RamseteCommand driveBackwards =
-            new RamseteCommand(
-                TrajectoryGenerator.generateTrajectory(
-                    new Pose2d(0, 0, new Rotation2d(0)), 
-                    List.of(                              
-                        new Translation2d(-2,0)
-                    ), 
-                    new Pose2d(-2, 0, new Rotation2d(0)), 
-                    Constants.AutoConstants.trajConfig.setReversed(true)
-                ),
-                m_robotDrive::getPose,
-                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-                Constants.Drive.driveKinematics,
-                (leftspeed, rightspeed) -> m_robotDrive.setWheelState(leftspeed, rightspeed),
-                m_robotDrive
-            );
+        Trajectory driveBackwards = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, new Rotation2d(0)), 
+            List.of(                              
+                new Translation2d(-1,0)
+            ), 
+            new Pose2d(-2, 0, new Rotation2d(0)), 
+            Constants.AutoConstants.trajConfig.setReversed(true)
+        );
 
         addCommands(
             new InstantCommand(() -> m_robotDrive.zeroGyro()),
-            new InstantCommand(() -> m_robotDrive.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)))),
+            new InstantCommand(() -> m_robotDrive.resetOdometry(driveBackwards.getInitialPose())),
             new IntakePistonControl(m_Intake, true),
 
             /* Shoot from Starting Line */
@@ -66,7 +59,14 @@ public class ShootAndDriveBack extends SequentialCommandGroup {
             new InstantCommand(() -> States.shooterState = ShooterStates.disabled),
 
             /* Drive backwards */
-            driveBackwards,
+            new RamseteCommand(
+                driveBackwards,
+                m_robotDrive::getPose,
+                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                Constants.Drive.driveKinematics,
+                (leftspeed, rightspeed) -> m_robotDrive.setWheelState(leftspeed, rightspeed),
+                m_robotDrive
+            ),
             new InstantCommand(() -> m_robotDrive.arcadeDrive(0, 0, false))
         );
     }
