@@ -127,9 +127,6 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double maxSpeed = 3; //MPS
-        public static final double maxAcelleration = 3; //MPSS (meters per second squared)
-
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
@@ -139,12 +136,6 @@ public final class Constants {
             new SimpleMotorFeedforward(Drive.drivekS, Drive.drivekV, Drive.drivekA);
         public static final DifferentialDriveVoltageConstraint autoVoltageConstraint =
             new DifferentialDriveVoltageConstraint(autoFF, Drive.driveKinematics, 10);
-
-        // Config for Trajectory Generation
-        public static final TrajectoryConfig trajConfig =
-            new TrajectoryConfig(maxSpeed, maxAcelleration)
-                .setKinematics(Constants.Drive.driveKinematics);
-                // .addConstraint(autoVoltageConstraint);
     }
 
 }

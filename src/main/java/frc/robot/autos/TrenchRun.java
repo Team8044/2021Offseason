@@ -17,8 +17,8 @@ import java.util.List;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,23 +35,21 @@ public class TrenchRun extends SequentialCommandGroup {
         addRequirements(m_robotDrive);
 
         Trajectory driveToTrench = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(4.5), Rotation2d.fromDegrees(16.0)), 
-            List.of(                              
-                new Translation2d(Units.feetToMeters(37.7), Units.feetToMeters(2.6)),
-                new Translation2d(Units.feetToMeters(33.0), Units.feetToMeters(2.2))
+            List.of( 
+                new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(4.5), Rotation2d.fromDegrees(16.0)),
+                new Pose2d(Units.feetToMeters(33.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0.0)),
+                new Pose2d(Units.feetToMeters(27.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0.0))
             ), 
-            new Pose2d(Units.feetToMeters(27.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0)), 
-            Constants.AutoConstants.trajConfig.setReversed(true)
+            new TrajectoryConfig(3.0, 3.0).setKinematics(Constants.Drive.driveKinematics).addConstraint(Constants.AutoConstants.autoVoltageConstraint).setReversed(true)
         );
 
         Trajectory driveToTarget = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(Units.feetToMeters(27.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0)), 
             List.of( 
-                new Translation2d(Units.feetToMeters(33.0), Units.feetToMeters(2.2)),
-                new Translation2d(Units.feetToMeters(37.7), Units.feetToMeters(2.6))
+                new Pose2d(Units.feetToMeters(27.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0.0)),
+                new Pose2d(Units.feetToMeters(33.0), Units.feetToMeters(2.2), Rotation2d.fromDegrees(0.0)),
+                new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(4.5), Rotation2d.fromDegrees(16.0))
             ), 
-            new Pose2d(Units.feetToMeters(42.1), Units.feetToMeters(4.5), Rotation2d.fromDegrees(16.0)), 
-            Constants.AutoConstants.trajConfig.setReversed(false)
+            new TrajectoryConfig(3.0, 3.0).setKinematics(Constants.Drive.driveKinematics).addConstraint(Constants.AutoConstants.autoVoltageConstraint).setReversed(false)
         );
             
 

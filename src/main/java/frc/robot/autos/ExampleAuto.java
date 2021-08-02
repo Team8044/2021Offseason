@@ -8,8 +8,8 @@ import java.util.List;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -19,15 +19,15 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class ExampleAuto extends SequentialCommandGroup {
 
     // An example trajectory.  All units in meters.
-    private Trajectory exampleTrajectory = 
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, new Rotation2d(0)),
-            List.of(                              
-                new Translation2d(2, 2), 
-                new Translation2d(3, -2)
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+            List.of( 
+                new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)),
+                new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0.0)),
+                new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(0.0)),
+                new Pose2d(3.0, 0.0, Rotation2d.fromDegrees(0.0))
             ), 
-            new Pose2d(5, 2, new Rotation2d(0)),
-        Constants.AutoConstants.trajConfig);
+            new TrajectoryConfig(3.0, 3.0).setKinematics(Constants.Drive.driveKinematics).setReversed(false)
+        );
 
     public ExampleAuto(DriveTrain m_robotDrive) {
         addRequirements(m_robotDrive);
