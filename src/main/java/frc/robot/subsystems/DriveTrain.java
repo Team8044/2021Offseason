@@ -136,7 +136,9 @@ public class DriveTrain extends SubsystemBase {
                 break;
                 
             case preShoot:
-                m_robotDrive.arcadeDrive(0.0, m_controller.calculate(m_Limelight.getTx().getDegrees()), false);
+                if (Constants.Shooter.autoAim){
+                    m_robotDrive.arcadeDrive(0.0, m_controller.calculate(m_Limelight.getTx().getDegrees()), false);
+                }
                 break;
         }
 
