@@ -95,7 +95,7 @@ public final class Constants {
         public static final float angleForwardLimit = 50;
         public static final float angleReverseLimit = 0;
 
-        public static final boolean autoAim = false;
+        public static final boolean autoAim = true;
         public static final boolean calibrationMode = false;
 
         /* Shooter Tuned Constants */
