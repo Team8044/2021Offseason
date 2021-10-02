@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import frc.lib.math.Boundaries;
 import frc.robot.Constants;
 import frc.robot.States;
 import frc.robot.States.ShooterStates;
@@ -32,28 +33,16 @@ public class teleopDrive extends CommandBase {
     @Override
     public void execute() {
         /* Deadbands */
-        throttleDouble = (Math.abs(throttle.getAsDouble()) < 0.1) ? 0 : throttle.getAsDouble();
-        rotationDouble = (Math.abs(rotation.getAsDouble()) < 0.1) ? 0 : rotation.getAsDouble();
+        throttleDouble = (Math.abs(throttle.getAsDouble()) < Constants.Drive.controllerDeadband) ? 0 : throttle.getAsDouble();
+        rotationDouble = (Math.abs(rotation.getAsDouble()) < Constants.Drive.controllerDeadband) ? 0 : rotation.getAsDouble();
 
-        // if (!quickTurn.getAsBoolean()){
-            //     m_driveTrain.curvDrive(throttleDouble, rotationDouble / 1.5, quickTurn.getAsBoolean());
-            // }
-            // else{
-            //     m_driveTrain.curvDrive(throttleDouble, rotationDouble, quickTurn.getAsBoolean());
-            // }
-        if (throttleDouble < 0){
-            throttleDouble = -Math.pow(throttleDouble, 2);
-        }
-        else {
-            throttleDouble = Math.pow(throttleDouble, 2);
-        }
+        /* Input Curving */
+        throttleDouble = Boundaries.curveInput(throttleDouble, Constants.Drive.throttleCurve);
+        rotationDouble = Boundaries.curveInput(rotationDouble, Constants.Drive.rotationCurve);
 
-        if (rotationDouble < 0){
-            rotationDouble = -Math.pow(rotationDouble, 2);
-        }
-        else {
-            rotationDouble = Math.pow(rotationDouble, 2);
-        }
+        /* Limiting Max Output */
+        throttleDouble = (Math.abs(throttleDouble) > Constants.Drive.maxThrottle) ? (Constants.Drive.maxThrottle * Math.signum(throttleDouble)) : throttleDouble;
+        rotationDouble = (Math.abs(rotationDouble) > Constants.Drive.maxRotation) ? (Constants.Drive.maxRotation * Math.signum(rotationDouble)) : rotationDouble;
 
         if (!Constants.Shooter.autoAim || States.shooterState != ShooterStates.preShoot){
             m_driveTrain.curvDrive(throttleDouble, rotationDouble, quickTurn.getAsBoolean());

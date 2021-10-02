@@ -18,4 +18,8 @@ public class Boundaries {
         degrees = (degrees < 0) ? (degrees + 360) : degrees; 
         return degrees;
     }
+
+    public static double curveInput(double input, int power){
+        return Math.pow(Math.abs(input), power) * Math.signum(input);
+    }
 }
