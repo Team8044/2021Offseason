@@ -55,7 +55,7 @@ public final class Constants {
         /* Controller Constants */
         public static final double controllerDeadband = 0.1;
 
-        public static final int rotationCurve = 2; //to see how this affects output go to: https://www.desmos.com/calculator/pm0c2ayrci
+        public static final int rotationCurve = 3; //to see how this affects output go to: https://www.desmos.com/calculator/pm0c2ayrci
         public static final int throttleCurve = 2;
 
         public static final double maxRotation = 1.0; //0 - 1.0  maximum possible output, 1.0 is default

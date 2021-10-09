@@ -178,10 +178,8 @@ public class DriveTrain extends SubsystemBase {
 
         
         /* Putting Data on Falcon Dashboard */
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("Live_Dashboard");
-        table.getEntry("robotX").setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getX()));
-        table.getEntry("robotY").setDouble(Units.metersToFeet(m_odometry.getPoseMeters().getY()));
-        table.getEntry("robotHeading").setDouble(m_odometry.getPoseMeters().getRotation().getRadians());
-        table.getEntry("isFollowingPath").setBoolean(true);
+        SmartDashboard.putNumber("robotX", m_odometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("robotY", m_odometry.getPoseMeters().getY());
+        SmartDashboard.putNumber("robotHeading", m_odometry.getPoseMeters().getRotation().getDegrees());
     }
 }

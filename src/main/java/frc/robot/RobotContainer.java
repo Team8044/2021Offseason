@@ -48,6 +48,9 @@ public class RobotContainer {
     private final JoystickButton shootButton = new JoystickButton(operator, XboxController.Button.kA.value);
     private final JoystickButton shooterActivateButton = new JoystickButton(operator, XboxController.Button.kBumperRight.value);
     private final JoystickButton shooterDeactivateButton = new JoystickButton(operator, XboxController.Button.kBumperLeft.value);
+    private final JoystickButton operatorIntakeButton = new JoystickButton(operator, XboxController.Button.kY.value);
+    private final POVButton operatorIntakeExtendButton = new POVButton(operator, 180);
+    private final POVButton operatorIntakeRetractButton = new POVButton(operator, 0);
 
     /* Subsystems */
     private final Vision m_Vision = new Vision();
@@ -83,9 +86,12 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Intake */
         intakeButton.whileHeld(new IntakeControl(m_Intake, 1.0));
+        operatorIntakeButton.whileHeld(new IntakeControl(m_Intake, 1.0));
         outakeButton.whileHeld(new IntakeControl(m_Intake, -1.0));
         intakeExtendButton.whenPressed(new IntakePistonControl(m_Intake, true));
         intakeRetractButton.whenPressed(new IntakePistonControl(m_Intake, false));
+        operatorIntakeExtendButton.whenPressed(new IntakePistonControl(m_Intake, true));
+        operatorIntakeRetractButton.whenPressed(new IntakePistonControl(m_Intake, false));
 
         /* Shooting */
         shootButton.whileHeld(
