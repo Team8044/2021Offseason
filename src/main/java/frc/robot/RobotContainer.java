@@ -2,7 +2,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.States.ShooterStates;
+import frc.robot.autos.DriveBack;
+import frc.robot.autos.ShootAndDriveBack;
 import frc.robot.autos.TrenchRun;
 import frc.robot.commands.IndexerControl;
 import frc.robot.commands.IntakeControl;
@@ -18,6 +22,7 @@ import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -52,6 +57,8 @@ public class RobotContainer {
     private final Kicker m_Kicker = new Kicker();
     private final Shooter m_Shooter = new Shooter(m_Vision);
 
+    SendableChooser<Command> autoChooser = new SendableChooser<>();
+
     public RobotContainer() {
         /* Teleop Drive */
         m_robotDrive.setDefaultCommand(
@@ -62,6 +69,13 @@ public class RobotContainer {
                 () -> driver.getRawButton(quickTurnButton)
             )
         );
+
+        autoChooser.setDefaultOption("Do Nothing", new WaitCommand(1.0));
+        autoChooser.addOption("Drive Backwards", new DriveBack(m_robotDrive, m_Kicker, m_Indexer, m_Intake));
+        autoChooser.addOption("Shoot and Drive Backwards", new ShootAndDriveBack(m_robotDrive, m_Kicker, m_Indexer, m_Intake));
+        autoChooser.addOption("Trench Run", new TrenchRun(m_robotDrive, m_Kicker, m_Indexer, m_Intake));
+
+        SmartDashboard.putData(autoChooser);
 
         configureButtonBindings();
     }
@@ -107,6 +121,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new TrenchRun(m_robotDrive, m_Kicker, m_Indexer, m_Intake);
+        return autoChooser.getSelected();
     }
 }
